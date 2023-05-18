@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pitchers', function (Blueprint $table) {
+        Schema::create('metadata', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('uuid')->references('uuid')->on('players');
-            $table->string('');
+            $table->array('series');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pitchers');
+        Schema::dropIfExists('metadata');
     }
 };
