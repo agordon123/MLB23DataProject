@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pitches', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pitcher_id')->references('id')->on('pitchers');
-            $table->string('name');
-            $table->integer('speed');
-            $table->integer('control');
-            $table->integer('movement');
+            $table->string('team_name');
+            $table->string('team_short_name');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pitches');
+        Schema::dropIfExists('teams');
     }
 };

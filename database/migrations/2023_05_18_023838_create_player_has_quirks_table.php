@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Player;
+use App\Models\Quirk;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,10 +13,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('series', function (Blueprint $table) {
-            $table->id();
-            $table->string('series_id');
-            $table->string('name');
+        Schema::create('player_has_quirks', function (Blueprint $table) {
+            $table->foreignIdFor(Player::class,'player_id');
+            $table->foreignIdFor(Quirk::class,'quirk_id');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('series');
+        Schema::dropIfExists('player_has_quirks');
     }
 };

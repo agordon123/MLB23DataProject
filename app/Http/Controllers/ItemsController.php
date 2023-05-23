@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+
 
 class ItemsController extends Controller
 {
@@ -19,7 +23,21 @@ class ItemsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+            'type' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(), 400
+            ]);
+        };
+        if($request->type == 'mlb_card'){
+            
+        }
+
+
     }
 
     /**

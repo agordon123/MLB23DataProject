@@ -10,12 +10,8 @@ class Quirk extends Model
     use HasFactory;
     protected $table = 'quirks';
     protected $fillable = ['name','description','img'];
-    public function hitter()
-    {
-        return $this->belongsTo(Hitter::class);
-    }
-    public function pitcher()
-    {
-        return $this->belongsTo(Pitcher::class);
+
+    public function players(){
+        return $this->belongsToMany(Player::class,'player_has_quirks');
     }
 }

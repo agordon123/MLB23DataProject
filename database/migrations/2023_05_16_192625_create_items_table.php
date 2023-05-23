@@ -13,15 +13,12 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid')->unique('item_uuid_fk');
+            $table->string('name');
             $table->string('type');
-            $table->integer('page');
-            $table->integer('total_pages');
-            $table->array('items');
+            $table->string('team');
+            $table->string('rarity');
             $table->timestamps();
-        });
-        Schema::create('item',function(Blueprint $table){
-            $table->id();
-            $table->string('uuid');
         });
     }
 
