@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Player;
 use App\Models\Pitcher;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class ParseJsonFile extends Command
@@ -31,41 +32,51 @@ class ParseJsonFile extends Command
     public function handle()
     {
         // Read the contents of items.json
-       // $itemsJson = Storage::json('../../../storage/app/public/items.json');
 
+        $directory = 'public';
+
+        $itemsJson = Storage::get($directory . '/items.json');
+        $data = json_decode($itemsJson, true);
         // Parse the JSON data
-       // $items = json_decode($itemsJson, true);
-
+        // $items = json_decode($itemsJson, true);
+        // $internetData = Http::get('https://mlb23.theshow.com/apis/items.json?type=mlb_card');
+        dd($data);
         // Loop through each item and store in the database as an item first
-     //ParseJsonFile.php   foreach ($items as $item) {
-         //   $newItem = new Item(['uuid' => $item['uuid'], 'type' => $item['type'], 'rarity' => $item['rarity'], 'team' => $item['team']]);
-         //   $newItem->save();
-            // Create or find the Pitcher based on name
-            //        if($newItem->type == 'mlb_card' ){
-            //        $playerCollection.$newItem;
-            //        if($newItem->is_hitter == true)
+        // foreach ($data as $item) {
+        //   echo ($item);
+        /*     if ($item->is_hitter == true){
+                $newItem = new Player([
+                    'uuid' => $item['uuid'],
+                     'type' => $item['type'],
+                     'rarity' => $item['rarity'],
+                     'team' => $item['team']
+                    ]);
+                $newItem->save();
+            }
 
-            //         $pitcher = Pitcher::firstOrCreate([
-            //          'name' => $item['pitcher_name'],
-            //             ]);
-            //        }
+        //  Create or find the Pitcher based on name
+                 if($newItem->type == 'mlb_card' ){
 
 
-            // Create the Pitch
-            //          $pitch = $pitcher->pitches()->create([
-            //           'name' => $item['pitch_name'],
-            //               // Assign other pitch-specific attributes
-            //       ]);
-            //
-            // Create the PitchAttributes for the Pitch
-            //         $pitch->attributes()->create([
-            //             'speed' => $item['speed'],
-            //               'control' => $item['control'],
-            //                'break' => $item['break'],
-            //             // Assign other pitch attribute values
-            //         ]);
-     //   }
 
-      //  $this->info('Items parsed and stored in the database.');
+                  $pitcher = Pitcher::firstOrCreate([
+                   'name' => $item['pitcher_name'],
+                      ]);
+                 }
+
+
+         // Create the Pitch
+                   $pitch = $pitcher->pitches()->create([
+                    'name' => $item['pitch_name'],
+                        // Assign other pitch-specific attributes
+                ]);
+
+        //  Create the PitchAttributes for the Pitch
+                  $pitch->attributes()->create([
+                      'speed' => $item['speed'],
+                        'control' => $item['control'],
+                         'break' => $item['break'],
+                      // Assign other pitch attribute values
+                  ]); */
     }
 }
