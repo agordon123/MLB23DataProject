@@ -14,6 +14,6 @@ class PitcherResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return['player_id'=> $request->player_id ,];
     }
 }

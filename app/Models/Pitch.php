@@ -13,7 +13,7 @@ class Pitch extends Model
     protected $table = 'pitches';
     public function players()
     {
-        return $this->belongsToMany(Pitcher::class, 'pitcher_has_pitches','pitch_id','pitcher_id')
+        return $this->belongsToMany(Player::class, 'pitcher_has_pitches','pitch_id','player_id')
             ->withPivot('speed', 'control', 'break');
     }
 }

@@ -25,7 +25,7 @@ class ItemsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',
-            'type' => 'required|string'
+            'type' => 'required|string:mlb_card'
         ]);
 
         if ($validator->fails()) {
@@ -34,12 +34,21 @@ class ItemsController extends Controller
             ]);
         };
         if($request->type == 'mlb_card'){
-            
+
         }
 
 
     }
+    /**
+     * Undocumented function
+     *
+     * @param string $id
+     * @return void
+     */
+    public function parseFromWeb(Request $request)
+    {
 
+    }
     /**
      * Display the specified resource.
      */

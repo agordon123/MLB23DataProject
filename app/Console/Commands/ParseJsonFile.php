@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Item;
 use App\Models\Player;
 use App\Models\Pitcher;
 use Illuminate\Console\Command;
@@ -29,33 +30,42 @@ class ParseJsonFile extends Command
      */
     public function handle()
     {
-         // Read the contents of items.json
-         $itemsJson = Storage::disk('public')->get('app/json/items.json');
+        // Read the contents of items.json
+       // $itemsJson = Storage::json('../../../storage/app/public/items.json');
 
-         // Parse the JSON data
-         $items = json_decode($itemsJson, true);
-        $player = new Player();
-         // Loop through each item and store in the database
-         foreach ($items as $item) {
-             // Create or find the Pitcher based on name
-             if($item->type == '')
-             $pitcher = Pitcher::firstOrCreate(['name' => $item['pitcher_name']]);
+        // Parse the JSON data
+       // $items = json_decode($itemsJson, true);
 
-             // Create the Pitch
-             $pitch = $pitcher->pitches()->create([
-                 'name' => $item['pitch_name'],
-                 // Assign other pitch-specific attributes
-             ]);
+        // Loop through each item and store in the database as an item first
+     //ParseJsonFile.php   foreach ($items as $item) {
+         //   $newItem = new Item(['uuid' => $item['uuid'], 'type' => $item['type'], 'rarity' => $item['rarity'], 'team' => $item['team']]);
+         //   $newItem->save();
+            // Create or find the Pitcher based on name
+            //        if($newItem->type == 'mlb_card' ){
+            //        $playerCollection.$newItem;
+            //        if($newItem->is_hitter == true)
 
-             // Create the PitchAttributes for the Pitch
-             $pitch->attributes()->create([
-                 'speed' => $item['speed'],
-                 'control' => $item['control'],
-                 'break' => $item['break'],
-                 // Assign other pitch attribute values
-             ]);
-         }
+            //         $pitcher = Pitcher::firstOrCreate([
+            //          'name' => $item['pitcher_name'],
+            //             ]);
+            //        }
 
-         $this->info('Items parsed and stored in the database.');
+
+            // Create the Pitch
+            //          $pitch = $pitcher->pitches()->create([
+            //           'name' => $item['pitch_name'],
+            //               // Assign other pitch-specific attributes
+            //       ]);
+            //
+            // Create the PitchAttributes for the Pitch
+            //         $pitch->attributes()->create([
+            //             'speed' => $item['speed'],
+            //               'control' => $item['control'],
+            //                'break' => $item['break'],
+            //             // Assign other pitch attribute values
+            //         ]);
+     //   }
+
+      //  $this->info('Items parsed and stored in the database.');
     }
 }

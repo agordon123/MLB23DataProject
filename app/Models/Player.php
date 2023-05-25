@@ -31,4 +31,8 @@ class Player extends Model
     public function pitcherStats(){
         return $this->hasOne(PitcherStats::class);
     }
+    public function item()
+    {
+        return $this->morphOne(Item::class, 'itemable');
+    }
 }

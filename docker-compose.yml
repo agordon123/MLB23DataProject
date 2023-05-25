@@ -1,0 +1,27 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl/certs
+      - ./ssl:/etc/ssl/private
+    depends_on:
+      - php
+    restart: always
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./php-fpm/www.conf:/etc/php/8.1/fpm/pool.d/www.conf
+      - /path/to/your/laravel/app:/var/www/html
+    restart: always
+
+# Add additional services for your Laravel app, Next.js, and PHPMyAdmin if needed

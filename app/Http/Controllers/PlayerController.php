@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PlayerResource;
+use App\Models\Item;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use App\Http\Resources\PlayerResource;
+use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
 {
@@ -14,6 +16,7 @@ class PlayerController extends Controller
     public function index()
     {
         $players = Player::all();
+        return PlayerResource::collection($players);
     }
 
     /**
@@ -21,9 +24,25 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
 
+    }
+    /**
+     * Parse items.json and
+     *
+     * @return void
+     */
+    public function getPlayerFromJson()
+    {
+        $players = Storage::json('/storage/app/public/items.json');
+        foreach($players as $player){
+            $item = new Item();
+            $newPlayer = new Player();
+            $item->uuid = $player['uuid'];
+            $item->name = $player['name'];
+            $item->type = $player['type'];
+            $item->rarity = $player['rarity'];
+        }
+    }
     /**
      * Display the specified resource.
      */
