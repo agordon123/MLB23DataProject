@@ -14,9 +14,12 @@ class PitchResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return ['id'=>$request->id,
-                'name' => $request->name,
-                'speed'=>$request->speed,
-                'control' =>$request->break  ];
+        return [
+            'player_id' => $request->player_id,
+            'pitch_id' => $request->pitch_id,
+            'name' => $request->name,
+            'speed' => $request->speed,
+            'control' => $request->break
+        ];
     }
 }

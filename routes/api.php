@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +19,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware(['auth:sanctum'])->group(
+    function () {
+        Route::get(
+            '/user',
+            function (Request $request) {
+                return (new UserResource($request->user()));
+            }
+        );
+
+        Route::post('roles/{role}/syncPermissions', [RoleController::class, 'syncPermissions']);
+        Route::resource('roles', RoleController::class);
+        Route::resource('players', PlayerController::class);
+        Route::resource('items', ItemsController::class);
+        Route::resource('users', UserController::class);
+    }
+);

@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('player_attributes_names', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('players', function (Blueprint $table) {
+            $table->json('pitcher_attributes');
         });
     }
 
@@ -22,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('player_attributes_names');
+        //
     }
 };

@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
+use App\Models\Pitch;
 use Illuminate\Support\Facades\Storage;
 
 class PlayerController extends Controller
@@ -24,25 +25,18 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-
-    }
-    /**
-     * Parse items.json and
-     *
-     * @return void
-     */
-    public function getPlayerFromJson()
-    {
-        $players = Storage::json('/storage/app/public/items.json');
-        foreach($players as $player){
-            $item = new Item();
-            $newPlayer = new Player();
-            $item->uuid = $player['uuid'];
-            $item->name = $player['name'];
-            $item->type = $player['type'];
-            $item->rarity = $player['rarity'];
+        $player = new Player();
+        $player->is_hitter = false;
+        if (!$player->is_hitter) {
+            $player->pitcher_stats = [
+                'pitching_clutch' => 0,
+                'hits_per_bf' => 0,
+                // Add other pitcher stats attributes with default values
+            ];
         }
+        $player->save();
     }
+
     /**
      * Display the specified resource.
      */
@@ -65,5 +59,7 @@ class PlayerController extends Controller
     public function destroy(Player $player)
     {
         $player = Player::find($player->id);
+        $player->delete();
+        return response()->json(['data' => 'Item Deleted'], 204);
     }
 }

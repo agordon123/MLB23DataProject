@@ -9,21 +9,24 @@ class Item extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'type', 'uuid','rarity','team','name','img'
+        'type', 'uuid', 'rarity', 'team', 'name', 'img'
     ];
     protected $casts = [
-        'uuid'      => 'string',
+        'uuid'  => 'string',
         'type' => 'string',
-        'name'=>'string',
-        'rarity'=>'string',
-        'team'=>'string'
+        'name' => 'string',
+        'rarity' => 'string',
+        'team' => 'string',
+        'img' => 'string'
     ];
+    protected $attributes = ['name' => ' ', 'uuid' => ' ', 'type' => 'mlb_card', 'team' => ' ', 'rarity' => ' ', 'img' => ' '];
     protected $table = 'items';
-    protected function players()
+    public function player()
     {
-        return $this->hasOne(Player::class);
+        return $this->belongsTo(Player::class);
     }
-    public function teams()
+
+    public function team()
     {
         return $this->hasOne(Team::class);
     }
@@ -31,10 +34,15 @@ class Item extends Model
     {
         return $this->type == $type;
     }
-    public function stadiums(){
+    public function stadiums()
+    {
         return $this->hasOne(Stadium::class);
     }
     public function itemable()
+    {
+        return $this->morphTo(Item::class);
+    }
+    public function imageable()
     {
         return $this->morphTo();
     }

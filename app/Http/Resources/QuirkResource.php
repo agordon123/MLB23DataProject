@@ -14,6 +14,10 @@ class QuirkResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $request->id,
+            'name' => $request->name,
+            'description' => $request->description
+        ];
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Item;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('item_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Item::class,'name');
+            $table->foreignIdFor(Item::class, 'type');
             $table->timestamps();
         });
     }
