@@ -16,7 +16,7 @@ class LoadDataCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'app:parse-file';
+    protected $signature = 'parse:json';
 
     /**
      * The console command description.

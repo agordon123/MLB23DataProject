@@ -42,13 +42,10 @@ class ParseTeams extends Command
         foreach ($data['teams'] as $team) {
             $name = $team['name'];
             $abbreviation = $team['abbreviation'];
-            $team = new Team(['team_name' => $name, 'team_short_name' => $abbreviation]);
+            $team = new Team(['name' => $name, 'abbreviation' => $abbreviation]);
             $team->save();
-            // DB::table('teams')->insert(['team_name' => $v['name'], 'team_short_name' => $v['abbreviation'],'created_at'=>Date::now(),'updated_at'=>Date::now()]);
             $this->info($team . 'inserted in table');
-            //   $newTeam->team_name  = $team['name'];
-            //   $newTeam->team_short_name = $team['abbreviation'];
-            //   $newTeam->save();
+
 
         }
         $this->info('Operation successfully saved');

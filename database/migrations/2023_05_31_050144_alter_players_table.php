@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('items', function (Blueprint $table) {
-            $table->string('img')->nullable();
-            $table->string('baked_img')->nullable();
+        Schema::table('players', function (Blueprint $table){
+            $table->string('position');
+            $table->string('secondary_positions');
         });
     }
 

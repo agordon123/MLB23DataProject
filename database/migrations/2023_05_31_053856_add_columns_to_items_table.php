@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('players', function (Blueprint $table) {
-            $table->json('pitcher_attributes');
+        Schema::table('items', function (Blueprint $table) {
+            $table->nullableMorphs('itemable');
         });
     }
 
@@ -21,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('items', function (Blueprint $table) {
+            //
+        });
     }
 };

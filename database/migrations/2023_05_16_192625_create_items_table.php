@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique('item_uuid_fk');
+            $table->string('img')->nullable();
+            $table->string('baked_img')->nullable();
             $table->string('name');
             $table->string('type');
             $table->string('team');

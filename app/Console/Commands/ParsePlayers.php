@@ -2,14 +2,13 @@
 
 namespace App\Console\Commands;
 
+use Exception;
 use App\Models\Item;
-use App\Models\Pitch;
-use App\Models\Quirk;
+use App\Models\Team;
 use App\Models\Player;
-use App\Models\Pitcher;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
-use App\Http\Resources\QuirkResource;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class ParsePlayers extends Command
@@ -35,13 +34,14 @@ class ParsePlayers extends Command
     {
         //parse json file from public storage
         $directory = 'public';
+        $page = $this->argument('page');
         $players = Storage::get($directory . '/items.json');
-        $json = json_decode($players, true);
-        //get quirks to use to attach to players
-        $quirks = Storage::get($directory . './quirks.json');
 
 
 
+        $itemsJson = Http::get('https://mlb23.theshow.com/apis/items.json?type=mlb_card');
+
+        $json = json_decode($itemsJson, true);
 
         //above code sets up items.json to parse for player,pitcher,items, and pitch models
         foreach ($json['items'] as $item) {
@@ -49,14 +49,19 @@ class ParsePlayers extends Command
             $uuid = $item['uuid'];
             $type =   $item['type'];
             $rarity =   $item['rarity'];
+            $name = $item['name'];
+            $img = $item['img'];
+            $baked_img = $item['baked_img'];
             $team = $item['team'];
-            $pitcherAttributes = [];
-            $itemAttributes = [
-                'uuid' =>   $uuid,
-                'type' =>   $type,
-                'rarity' => $rarity,
-                'team ' =>  $team
-            ];
+            $teamId = Team::searchByName($team);
+            dd($teamId);
+
+
+
+
+
+
+
             $ovr = $item['ovr'];
             $age = $item['age'];
             $height = $item['height'];
@@ -64,55 +69,56 @@ class ParsePlayers extends Command
             $th = $item['throw_hand'];
             $weight = $item['weight'];
             $is_hitter = $item['is_hitter'];
-            $contact_left = $item['contact_left'];
-            $contact_right = $item['contact_right'];
             $position  = $item['display_position'];
-            $secondary_position = $item['display_secondary_position'];
-            $power_left = $item['power_left'];
-            $power_right = $item['power_right'];
-            $plate_vision = $item['plate_vision'];
-            $plate_discipline = $item['plate_discipline'];
-            $batting_clutch = $item['batting_clutch'];
-            $bunting = $item['bunting_ability'];
-            $baserunning_ability = $item['baserunning_ability'];
-            $baserunning_aggression = $item['baserunning_aggression'];
-            $playerAttributes = [
-
-                'ovr' => $ovr,
-                'age' => $age,
-                'height' =>  $height,
-                'weight' => $$weight,
-                'bat_hand' => $bh,
-                'throw_hand' => $th,
-                'display_position' => $position,
-                'secondary_position' => $secondary_position,
-                'is_hitter' => $is_hitter,
-                'contact_left' => $contact_left,
-                'contact_right' => $contact_right,
-                'power_left' => $power_left,
-                'power_right' => $power_right,
-                'plate_vision' => $plate_vision,
-                'plate_discipline' => $plate_discipline,
-                'batting_clutch' =>  $batting_clutch,
-                'bunting_ability' => $bunting,
-                'baserunning_ability' => $baserunning_ability,
-                '$baserunning_aggression' => $baserunning_aggression
+            $secondary_position = $item['display_secondary_positions'];
+            $itemAttributes = [
+                'uuid' =>   $uuid,
+                'type' =>   $type,
+                'rarity' => $rarity,
+                'img' => $img,
+                'baked_img' => $baked_img,
+                'name' => $name,
             ];
 
-            $player = new Player($playerAttributes);
 
-            $item = new Item($itemAttributes);
-            $item->player()->associate($player);
-            $item->save();
-            $player->save();
+            try {
+                DB::beginTransaction();
+                $item = Item::create($itemAttributes);
+                $itemId = $item->id;
+                $playerData = [
+
+                    'ovr' => $ovr,
+                    'age' => $age,
+                    'height' =>  $height,
+                    'weight' => $weight,
+                    'bat_hand' => $bh,
+                    'throw_hand' => $th,
+                    'position' => $position,
+                    'secondary_positions' => $secondary_position,
+                    'is_hitter' => $is_hitter,
+                    'item_id'=>$itemId
 
 
-            if ($item['is_hitter'] == true) {
+                ];
+                // Save the item
+
+
+                // Save the player and associate it with the item
+                $player = Player::create($playerData);
+                $player->item()->associate($item);
+                $player->save();
+
+                DB::commit();
+
+                // Other processing or response
+            } catch (Exception $e) {
+                DB::rollback();
+                $this->info($e);
+
+                // Handle the exception
             }
-
-
-
-
+            $this->info($item . ' Saved', $player . ' Saved');
         }
+        $this->info('Successfully Parsed Items');
     }
 }

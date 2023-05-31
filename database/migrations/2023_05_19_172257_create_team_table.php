@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->string('team_name');
-            $table->string('team_short_name');
+            $table->string('name');
+            $table->string('abbreviation');
             $table->timestamps();
         });
     }

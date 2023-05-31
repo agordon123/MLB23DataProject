@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Models\Player;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-class Pitcher extends Player
+use Illuminate\Database\Eloquent\Model;
+class PitchingStats extends Model
 {
     use HasFactory;
 
@@ -17,7 +17,8 @@ class Pitcher extends Player
         'pitch_velocity',
         'pitch_control',
         'pitch_movement',
-        'pitcher_stats'
+        'pitcher_stats',
+        "stamina",
     ];
     protected $table = 'pitcher_stats';
     protected $with  = ['player'];
@@ -28,16 +29,9 @@ class Pitcher extends Player
         return $this->belongsTo(Player::class, 'player_id');
     }
 
-    public function item()
-    {
-        return $this->morphMany(Item::class, 'itemable');
-    }
 
-    public function pitches()
-    {
-        return $this->belongsToMany(Pitch::class, 'pitcher_has_pitches')
-        ->withPivot('speed', 'control', 'break');
-    }
+
+
 
     // Override newFromBuilder method
 
@@ -47,7 +41,7 @@ class Pitcher extends Player
 
         // Check if is_hitter is false
         if (!$model->is_hitter) {
-            $model = $model->newInstance([], true); // Create new instance of Pitcher model
+            $model = $model->newInstance([], true); // Create new instance of PitchingStats model
             $model->exists = true; // Mark the model as existing
         }
 

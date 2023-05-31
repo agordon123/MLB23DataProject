@@ -19,7 +19,7 @@ class Item extends Model
         'team' => 'string',
         'img' => 'string'
     ];
-    protected $attributes = ['name' => ' ', 'uuid' => ' ', 'type' => 'mlb_card', 'team' => ' ', 'rarity' => ' ', 'img' => ' '];
+    protected $attributes = ['type' => 'mlb_card'];
     protected $table = 'items';
     public function player()
     {
@@ -28,12 +28,9 @@ class Item extends Model
 
     public function team()
     {
-        return $this->hasOne(Team::class);
+        return $this->hasOne(Team::class, 'id', 'team_id');
     }
-    public function getTypeAttribute($type)
-    {
-        return $this->type == $type;
-    }
+
     public function stadiums()
     {
         return $this->hasOne(Stadium::class);

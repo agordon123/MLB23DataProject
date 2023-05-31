@@ -27,14 +27,10 @@ class ParseQuirks extends Command
      */
     public function handle()
     {
-        //parse json file from public storage
         $directory = 'public';
-        $players = Storage::get($directory . '/items.json');
-        $json = json_decode($players, true);
-        //get quirks to use to attach to players
-        $quirks = Storage::get($directory . './quirks.json');
-        $quirkJson = json_decode($quirks, true);
-        foreach ($quirkJson['quirks'] as $quirk) {
+        $quirkSS = Storage::get($directory . '/quirks.json');
+        $data = json_decode($quirkSS, true);
+        foreach ($data['quirks'] as $quirk) {
             $name = $quirk['name'];
 
             $description = $quirk['description'];

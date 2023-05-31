@@ -23,25 +23,8 @@ return new class extends Migration
             $table->integer('weight');
             $table->string('bat_hand');
             $table->boolean('is_hitter');
-            $table->integer('contact_left');
-            $table->integer('contact_right');
-            $table->integer('power_left');
-            $table->integer('power_right');
-            $table->integer('plate_vision');
-            $table->integer('plate_discipline');
-            $table->integer('batting_clutch');
-            $table->integer('bunting_ability');
-            $table->integer('drag_bunting_ability');
-            $table->integer('hitting_durability');
-            $table->integer('fielding_durability');
-            $table->integer('fielding_ability');
-            $table->integer('arm_strength');
-            $table->integer('arm_accuracy');
-            $table->integer('reaction_time');
-            $table->integer('blocking');
-            $table->integer('speed');
-            $table->integer('baserunning_ability')->nullable();
-            $table->integer('baserunning_aggression')->nullable();
+
+
             $table->timestamps();
         });
         Schema::create('pitcher_stats',function (Blueprint $table){

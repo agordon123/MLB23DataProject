@@ -29,10 +29,10 @@ class AttachQWirks extends Command
     {
         $directory = 'public/';
         $filename = 'items';
-
-
-        $itemsJson = Storage::get($directory . $filename . '.json');
-        $data = json_decode($itemsJson, true);
+        $quirks = Storage::get($directory . './quirks.json');
+        //get quirks to use to attach to players
+        
+        $data = json_decode($quirks, true);
 
         if (isset($data['items']['quirks'])) {
             dd($data['items']['quirks']);

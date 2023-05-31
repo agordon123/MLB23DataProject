@@ -19,7 +19,7 @@ return new class extends Migration
             $table->primary(['player_id','pitch_id']);
             $table->integer('speed');
             $table->integer('control');
-            $table->integer('break');
+            $table->integer('movement');
             $table->timestamps();
         });
     }

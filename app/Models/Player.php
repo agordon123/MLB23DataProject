@@ -5,8 +5,10 @@ namespace App\Models;
 
 
 use App\Models\Item;
+use App\Models\Pitch;
 use App\Models\Quirk;
-use App\Models\Pitcher;
+use App\Models\HittingStats;
+use App\Models\PitchingStats;
 use App\Casts\PitchAttributesCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,44 +18,37 @@ class Player extends Model
     use HasFactory;
     protected $table = 'players';
     protected $fillable = [
-        'ovr', 'age', 'height', 'weight', 'jersey_number', 'bat_hand', 'throw_hand', 'born', 'is_hitter', "stamina", "contact_left",
-        "contact_right", "power_left", "power_right", "plate_vision", "plate_discipline", "batting_clutch", "bunting_ability", "drag_bunting_ability",
-        "hitting_durability", "fielding_ability", "arm_strength", "arm_accuracy", "reaction_time", "blocking", "speed", "baserunning_ability", "baserunning_aggression",
-        'pitcher_stats'
+        'ovr', 'age', 'height', 'weight', 'bat_hand', 'throw_hand',  'is_hitter',  'position', 'secondary_positions',
+       
+
     ];
 
 
-    protected $casts = [
-        'pitcher_stats' => PitchAttributesCast::class,
-    ];
+    //  protected $casts = [
+    //       'pitcher_stats' => PitchAttributesCast::class,
+    //   ];
 
-    protected static function booted()
+    public function pitches()
     {
-        static::creating(function ($model) {
-            $model->drag_bunting_ability = 1;
-            $model->hitting_durability = 1;
-            $model->fielding_durability = 1;
-            $model->fielding_ability = 1;
-            $model->arm_strength = 1;
-            $model->arm_accuracy = 1;
-            $model->reaction_time = 1;
-            $model->blocking = 0;
-            $model->speed = 0;
-            $model->baserunning_ability = 0;
-            $model->baserunning_aggression = 0;
-        });
+        return $this->belongsToMany(Pitch::class, 'pitcher_has_pitches')
+        ->withPivot('speed', 'control', 'break');
     }
+
     public function quirks()
     {
         return $this->hasManyThrough(Quirk::class, 'player_has_quirks', 'player_id', 'quirk_id', 'id', 'id');
     }
 
-    public function pitcher()
+    public function pitchingStats()
     {
-        return $this->hasOne(Pitcher::class, 'player_id');
+        return $this->hasOne(PitchingStats::class, 'player_id');
+    }
+    public function hittingStats(){
+        return $this->hasOne(HittingStats::class);
     }
     public function item()
     {
         return $this->morphOne(Item::class, 'itemable');
     }
+
 }
