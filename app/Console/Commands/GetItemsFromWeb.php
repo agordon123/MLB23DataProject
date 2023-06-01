@@ -37,7 +37,7 @@ class GetItemsFromWeb extends Command
             $itemsJson = Http::get($url);
             $data = $itemsJson->json();
             $jsonData = json_encode($data);
-            Storage::put("public/items{$i}.json", $jsonData);
+            Storage::put("public/json/items{$i}.json", $jsonData);
 
         }
     }

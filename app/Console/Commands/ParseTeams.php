@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 
 use App\Models\Team;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ParseTeams extends Command

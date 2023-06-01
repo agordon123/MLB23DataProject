@@ -32,23 +32,9 @@ class LoadDataCommand extends Command
     {
 
         // Specify the filename of the JSON file
-        $filename = $this->argument('filename');
+        $page = $this->argument('page');
         $directory = 'public';
 
-        if ($filename === 'items') {
 
-            Artisan::call('parse:players');
-        } elseif ($filename === 'teams' && Team::all() == nullValue()) {
-
-            Artisan::call('data:parse-teams');
-        }
-        elseif ($filename === 'pitches') {
-
-            Artisan::call('data:parse-pitches');
-        } elseif ($filename === 'items') {
-            Artisan::call('parse:items-jsons');
-        } else
-            $this->error("Invalid filename.");
-        return;
     }
 }

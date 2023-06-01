@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 
 class ItemsController extends Controller
@@ -15,7 +15,8 @@ class ItemsController extends Controller
      */
     public function index()
     {
-        //
+
+
     }
 
     /**
@@ -33,11 +34,8 @@ class ItemsController extends Controller
                 'errors' => $validator->errors(), 400
             ]);
         };
-        if($request->type == 'mlb_card'){
-
+        if ($request->type == 'mlb_card') {
         }
-
-
     }
     /**
      * Undocumented function
@@ -47,7 +45,6 @@ class ItemsController extends Controller
      */
     public function parseFromWeb(Request $request)
     {
-
     }
     /**
      * Display the specified resource.
@@ -56,7 +53,21 @@ class ItemsController extends Controller
     {
         //
     }
+    /**
+     *  updateName - updates name of item on table
+     *
+     * @param Request $request
+     * @param string $id
+     * @return void
+     */
+    public function updateName(Request $request, $uuid)
+    {
+        $newName = $request->input('name');
 
+        Item::where('uuid', $uuid)->update(['name' => $newName]);
+
+        return response()->json(['message' => 'Name updated successfully']);
+    }
     /**
      * Update the specified resource in storage.
      */

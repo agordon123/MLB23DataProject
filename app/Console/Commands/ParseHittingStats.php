@@ -41,22 +41,15 @@ class ParseHittingStats extends Command
         $json = json_decode($itemsJson, true);
         foreach ($json['items'] as $item) {
 
-            $uuid = $item['uuid'];
-            $type =   $item['type'];
-            $rarity =   $item['rarity'];
-
-            $name = $item['name'];
-            $img = $item['img'];
-            $baked_img = $item['baked_img'];
 
 
 
-           
-            $is_hitter = $item['is_hitter'];
+
+
+
             $contact_left = $item['contact_left'];
             $contact_right = $item['contact_right'];
-            $position  = $item['display_position'];
-            $secondary_position = $item['display_secondary_positions'];
+
             $power_left = $item['power_left'];
             $power_right = $item['power_right'];
             $plate_vision = $item['plate_vision'];
