@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ItemResource;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -26,7 +27,8 @@ class ItemsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',
-            'type' => 'required|string:mlb_card'
+            'type' => 'required|string:mlb_card',
+            'img'=>'sometimes|string'
         ]);
 
         if ($validator->fails()) {
@@ -38,7 +40,7 @@ class ItemsController extends Controller
         }
     }
     /**
-     * Undocumented function
+     * Get Items from Web
      *
      * @param string $id
      * @return void
@@ -51,7 +53,8 @@ class ItemsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $item = Item::findOrFail($id);
+        return new ItemResource($item);
     }
     /**
      *  updateName - updates name of item on table
@@ -81,6 +84,8 @@ class ItemsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $item = Item::findOrFail($id);
+        $item->delete();
+        return response()->json(['Deleted item' . $id],204);
     }
 }

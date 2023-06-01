@@ -12,11 +12,13 @@ class Quirk extends Model
     protected $fillable = ['name','description','img','baked_img'];
 
     public function player(){
-        return $this->belongsToMany(Player::class,'player_has_quirks','player_id','quirk_id');
+        return $this->belongsToMany(Player::class,'player_has_quirks');
     }
-    public function scopeByName(){
-        
+    public function scopeByName($query, $name)
+    {
+        return $query->where('name', $name);
     }
+
   /*  protected static function booted()
     {
         static::creating(function ($model) {

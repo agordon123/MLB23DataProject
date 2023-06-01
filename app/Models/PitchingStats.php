@@ -21,12 +21,12 @@ class PitchingStats extends Model
         "stamina",
     ];
     protected $table = 'pitcher_stats';
-    protected $with  = ['player'];
+
 
     // want to code that if is_hitter = false , to use pitcher model and not hitter model.  also want to make it a propery of a pitcher
     public function player()
     {
-        return $this->belongsTo(Player::class, 'player_id');
+        return $this->belongsTo(Player::class);
     }
 
 

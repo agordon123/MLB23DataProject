@@ -24,7 +24,14 @@ class PitchController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = Validator::make($request->all(), [
+            'name' => 'required', 'abbreviation' => 'required'
+        ]);
+        if ($validated) {
+            $pitch = new Pitch(['name ' => $request->name, 'abbreviation' => $request->abbrevation]);
+            $pitch->save();
+        }
+        return response()->json('Pitch ID # ' . $pitch->id . 'saved');
     }
 
     /**
@@ -41,10 +48,10 @@ class PitchController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = Validator::make($request->all(),[
-            'pitch_id'=>'required',
-            'name'=>'required',
-            'abbreviation'=>'required'
+        $validated = Validator::make($request->all(), [
+            'pitch_id' => 'required',
+            'name' => 'required',
+            'abbreviation' => 'required'
         ]);
     }
 
@@ -56,6 +63,6 @@ class PitchController extends Controller
         $pitch = Pitch::findOrFail($id);
         $pitch->delete();
 
-        return response()->json(['data'=>'Pitch with id '.$id . ' deleted'],204);
+        return response()->json(['data' => 'Pitch with id ' . $id . ' deleted'], 204);
     }
 }

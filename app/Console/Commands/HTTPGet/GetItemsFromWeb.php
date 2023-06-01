@@ -28,11 +28,11 @@ class GetItemsFromWeb extends Command
     public function handle()
     {
 
+        //this for loop creates a json file for every page of mlb_cards from theshow.com and stores it in storage/app/public/json
 
 
 
-
-        for ($i = 26; $i <= 106; $i++) {
+        for ($i = 1; $i <= 106; $i++) {
             $url = "https://mlb23.theshow.com/apis/items.json?type=mlb_card&page={$i}";
             $itemsJson = Http::get($url);
             $data = $itemsJson->json();

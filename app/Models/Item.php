@@ -9,7 +9,7 @@ class Item extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'type', 'uuid', 'rarity', 'team', 'name', 'img'
+        'type', 'uuid', 'rarity', 'team', 'name', 'img', 'baked_img'
     ];
     protected $casts = [
         'uuid'  => 'string',
@@ -28,7 +28,7 @@ class Item extends Model
 
     public function team()
     {
-        return $this->hasOne(Team::class, 'id', 'team_id');
+        return $this->hasOne(Team::class, 'team_id', 'id');
     }
 
     public function stadiums()

@@ -6,14 +6,14 @@ use App\Models\Item;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class AddName extends Command
+class AddTeamToItem extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:add-name';
+    protected $signature = 'add:team';
 
     /**
      * The console command description.
@@ -27,20 +27,24 @@ class AddName extends Command
      */
     public function handle()
     {
-        $directory = 'public/';
+        $directory = 'public/json/';
         $filename = 'items';
 
+        for ($i = 1; $i <= 106; $i++){
+            $itemsJson = Storage::get($directory . $filename . $i . '.json');
+            $data = json_decode($itemsJson, true);
+            foreach ($data['items'] as $item) {
 
-        $itemsJson = Storage::get($directory . $filename . '1' . '.json');
-        $data = json_decode($itemsJson, true);
+                $uuid = $item['uuid'];
+                $team = $item['team'];
+                Item::where('uuid', $uuid)->update(['team' => $team]);
+            }
+        }
+
 
 
         // Loop through each item and store in the database as an item first
         //above code sets up items.json to parse for player,pitcher,items, and pitch models
-        foreach ($data['items'] as $item){
-            $name = $item['name'];
-            $uuid = $item['uuid'];
-            Item::where('uuid', $uuid)->update(['name' => $name]);
-        }
+
     }
 }
