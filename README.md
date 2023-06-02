@@ -1,13 +1,13 @@
-# H1
+# 
 
 MLB23 The Show : Playing with Data
 Using Laravel 10 as an API and NextJS for the front end with Laravel Breeze
 
-## H2
+## 
 
 To get started, use the Kernel Commands to pull and seed the Database from the mlb23.theshow.com api.
 
-### H3
+### 
 
 Requirements
 
