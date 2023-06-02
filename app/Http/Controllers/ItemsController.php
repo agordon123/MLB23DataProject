@@ -6,6 +6,7 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ItemResource;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -28,7 +29,8 @@ class ItemsController extends Controller
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',
             'type' => 'required|string:mlb_card',
-            'img'=>'sometimes|string'
+            'img'=>'sometimes|string',
+            'baked_img'=>'sometimes|string'
         ]);
 
         if ($validator->fails()) {
@@ -36,8 +38,9 @@ class ItemsController extends Controller
                 'errors' => $validator->errors(), 400
             ]);
         };
-        if ($request->type == 'mlb_card') {
-        }
+        $item = Item::create([
+            'uuid'=>$request->item['uuid']
+        ]);
     }
     /**
      * Get Items from Web
@@ -47,6 +50,9 @@ class ItemsController extends Controller
      */
     public function parseFromWeb(Request $request)
     {
+        $request = Http::get('https://mlb23.theshow.com/apis/items.json?type=mlb_card');
+        $dataJson = json_decode($request,true);
+        
     }
     /**
      * Display the specified resource.

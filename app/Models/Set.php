@@ -6,15 +6,12 @@ use App\Models\Item;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Stadium extends Model
+class Set extends Model
 {
     use HasFactory;
+    protected $fillable = ['name'];
 
-    public function item()
-    {
+    public function item(){
         return $this->belongsTo(Item::class);
-    }
-    public function team(){
-        return $this->hasOne(Team::class);
     }
 }

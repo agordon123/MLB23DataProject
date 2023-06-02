@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\PitchController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -30,8 +31,9 @@ Route::middleware(['auth:sanctum'])->group(
 
         Route::post('roles/{role}/syncPermissions', [RoleController::class, 'syncPermissions']);
         Route::resource('roles', RoleController::class);
-        Route::resource('players', PlayerController::class);
-        Route::resource('items', ItemsController::class);
         Route::resource('users', UserController::class);
     }
 );
+Route::resource('players', PlayerController::class);
+Route::resource('items', ItemsController::class);
+Route::resource('pitches',PitchController::class);

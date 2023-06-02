@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Pitch;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use App\Models\PitchingStats;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PitcherResource;
-use App\Models\Pitcher;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\PitcherStatsResource;
 
-class PitcherController extends Controller
+class PitcherStatsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $pitchers = Pitcher::all();
-        return PitcherResource::collection($pitchers);
+        $pitchers = PitchingStats::all()->with(['player']);
+        return PitcherStatsResource::collection($pitchers);
     }
 
     /**
@@ -38,7 +38,9 @@ class PitcherController extends Controller
             'pitch_movement' => 'required'
         ]);
         if ($validated) {
-            $pitcher = new Pitcher();
+            $pitcher = new PitchingStats([
+
+            ]);
             foreach($request->all() as $item){
 
             }
@@ -50,19 +52,19 @@ class PitcherController extends Controller
      */
     public function show(string $id)
     {
-        $pitcher = Pitcher::findOrFail($id);
+        $pitcher = PitchingStats::findOrFail($id);
         if($pitcher == null){
             return response()->json([],400);
         }
-        return response()->json(new PitcherResource($pitcher),200);
+        return response()->json(new PitcherStatsResource($pitcher),200);
     }
     /**
      * syncPitches
      *
      */
-    public function syncPitches(Player $player, Pitch $pitch)
+    public function syncPitches(Request $request,Player $player, Pitch $pitch)
     {
-        
+
     }
     /**
      * Update the specified resource in storage.

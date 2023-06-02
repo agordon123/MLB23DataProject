@@ -7,7 +7,7 @@ use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
 use App\Models\Pitch;
-use Illuminate\Support\Facades\Storage;
+
 
 class PlayerController extends Controller
 {
@@ -35,14 +35,19 @@ class PlayerController extends Controller
             ];
         }
         $player->save();
+
+        return (new PlayerResource($player))->response()->setStatusCode(201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Player $player)
+    public function show($id)
     {
-        //
+        $player = Player::with('quirks','player_hitting_stats','player_fielding_stats')
+        ->whenHas('pitching_stats', function ($query) {
+            $query->with('pitches','pitching_stats');
+        })->find($id);
     }
 
     /**

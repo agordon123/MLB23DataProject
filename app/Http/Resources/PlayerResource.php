@@ -10,44 +10,79 @@ class PlayerResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  Request  $request
+     * @return array
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
+        $data = [
+            'id' => $this->id,
+            'uuid' => $this->uuid,
+
+            'ovr' => $this->ovr,
+            'age' => $this->age,
+            'height' => $this->height,
+            'weight' => $this->weight,
+            'bat_hand' => $this->bat_hand,
+            'throw_hand' => $this->throw_hand,
+            'born' => $this->born,
+            'is_hitter' => $this->is_hitter,
+            'type' => $this->item->type,
+            'rarity' => $this->item->rarity,
+            'name' => $this->item->name,
+            'team' => $this->item->team,
+            'img' => $this->item->img,
+            'baked_img' => $this->item->baked_img,
+            'quirks' => $this->quirks()->pluck('name'),
+            'contact_left' => $this->player_hitting_stats->contact_left ?? null,
+            'contact_right' => $this->player_hitting_stats->contact_right ?? null,
+            'power_left' => $this->player_hitting_stats->power_left ?? null,
+            'power_right' => $this->player_hitting_stats->power_right ?? null,
+            'plate_vision' => $this->player_hitting_stats->plate_vision ?? null,
+            'plate_discipline' => $this->player_hitting_stats->plate_discipline ?? null,
+            'batting_clutch' => $this->player_hitting_stats->batting_clutch ?? null,
+            'bunting_ability' => $this->player_hitting_stats->bunting_ability ?? null,
+            'drag_bunting_ability' => $this->player_hitting_stats->drag_bunting_ability ?? null,
+            'fielding_ability' => $this->player_fielding_stats->fielding_ability ?? null,
+            'arm_strength' => $this->player_fielding_stats->arm_strength ?? null,
+            'arm_accuracy' => $this->player_fielding_stats->arm_accuracy ?? null,
+            'reaction_time' => $this->player_fielding_stats->reaction_time ?? null,
+            'blocking' => $this->player_fielding_stats->blocking ?? null,
+            'speed' => $this->player_fielding_stats->speed ?? null,
+            'baserunning_ability' => $this->player_fielding_stats->baserunning_ability ?? null,
+            'baserunning_aggression' => $this->player_fielding_stats->baserunning_aggression ?? null,
+        ];
+        if (!$this->is_hitter) {
+            $data = array_merge($data, [
+                'stamina' => $this->player_hitting_stats->stamina ?? null,
+                'pitcher_stats' => $this->pitcher_stats,
+            ]);
+        }
         return [
-            'id' => $request->id,
-            'uuid' => $request->uuid,
-            'type' => $request->type,
-            'rarity' => $request->rarity,
-            'name' => $request->name,
-            'ovr' => $request->ovr,
-            'age' => $request->age,
-            'height' => $request->height,
-            'weight' => $request->weight,
-            'jersey_number' => $request->jersey_number,
-            'bat_hand' => $request->bat_hand,
-            'throw_hand' => $request->throw_hand,
-            'born' => $request->born,
-            'is_hitter' => $request->is_hitter,
-            "stamina" => $request->stamina,
-            "contact_left" => $request->contact_left,
-            "contact_right" => $request->contact_right,
-            "power_left" => $request->power_left,
-            "power_right" => $request->power_right,
-            "plate_vision" => $request->plate_vision,
-            "plate_discipline" => $request->plate_discipline,
-            "batting_clutch" => $request->batting_clutch,
-            "bunting_ability" => $request->bunting_ability,
-            "drag_bunting_ability" => $request->drag_bunting_ability,
-            "hitting_durability" => $request->hitting_durability,
-            "fielding_ability" => $request->fielding_ability,
-            "arm_strength" => $request->arm_strength,
-            "arm_accuracy" => $request->arm_accuracy,
-            "reaction_time" => $request->$request->reaction_time,
-            "blocking" => $request->blocking,
-            "speed" => $request->speed,
-            "baserunning_ability" => $request->baserunning_ability,
-            "baserunning_aggression" => $request->baserunning_aggression,
+            'id' => $this->id,
+            'uuid' => $this->uuid,
+            'type' => $this->item->type,
+            'rarity' => $this->item->rarity,
+            'name' => $this->name,
+            'ovr' => $this->ovr,
+            'age' => $this->age,
+            'height' => $this->height,
+            'weight' => $this->weight,
+            'bat_hand' => $this->bat_hand,
+            'throw_hand' => $this->throw_hand,
+            'born' => $this->born,
+            'is_hitter' => $this->is_hitter,
+
+            'quirks' => $this->quirks()->pluck('name'),
+            'pitches' => $this->is_hitter ? [] : $this->pitches->map(function ($pitch) {
+                return [
+                    'name' => $pitch->name,
+                    'speed' => $pitch->pivot->speed,
+                    'control' => $pitch->pivot->control,
+                    'movement' => $pitch->pivot->movement,
+                ];
+            }),
+
         ];
     }
 }

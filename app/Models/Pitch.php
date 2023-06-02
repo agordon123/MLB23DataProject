@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pitch extends Model
 {
+    /**
+     * This Model is for the Pitches table, which stores data for each type of pitch
+     * It has a belong to many relationship with Player
+     */
     use HasFactory;
     protected $fillable = ['name', 'abbreviation'];
     public $timestamps = false;
-    // I am aware I did not make a Pitcher table but I made a pitcher model
+
     protected $table = 'pitches';
     public function players()
     {

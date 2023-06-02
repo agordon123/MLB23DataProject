@@ -10,6 +10,7 @@ class PitchingStats extends Model
     use HasFactory;
 
     protected $fillable = [
+        'player_id',
         'pitching_clutch',
         'hits_per_bf',
         'k_per_bf',
@@ -22,8 +23,6 @@ class PitchingStats extends Model
     ];
     protected $table = 'pitcher_stats';
 
-
-    // want to code that if is_hitter = false , to use pitcher model and not hitter model.  also want to make it a propery of a pitcher
     public function player()
     {
         return $this->belongsTo(Player::class);

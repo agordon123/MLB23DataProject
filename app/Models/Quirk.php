@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Quirk extends Model
 {
+    /**
+     * This Model is for the Quirks table, which stores data for each Quirk
+     * It has a belong to many relationship with Player, and a function to scope queries by name instead of ID
+     */
     use HasFactory;
     protected $table = 'quirks';
     protected $fillable = ['name','description','img','baked_img'];
@@ -19,10 +23,5 @@ class Quirk extends Model
         return $query->where('name', $name);
     }
 
-  /*  protected static function booted()
-    {
-        static::creating(function ($model) {
-            $model->attribute_name = 'default_value';
-        });
-    }*/
+
 }

@@ -31,7 +31,7 @@ class PitchController extends Controller
             $pitch = new Pitch(['name ' => $request->name, 'abbreviation' => $request->abbrevation]);
             $pitch->save();
         }
-        return response()->json('Pitch ID # ' . $pitch->id . 'saved');
+        return response()->json('Pitch ID # ' . $pitch->id . 'saved',200);
     }
 
     /**
