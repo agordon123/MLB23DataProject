@@ -33,8 +33,8 @@ class ParseMetaData extends Command
         $fileName = 'meta_data/meta_data-2023-06-02_12-30-05.json';
         // Get all the files in the directory
         $jsonDatas = Storage::get($directory.$fileName);
-        $data = json_decode($jsonDatas);
-        dd($data);
+        $data = json_decode($jsonDatas,true);
+
 
 
         // Store the file names in a variable
@@ -42,6 +42,7 @@ class ParseMetaData extends Command
 
 
             foreach ($data['series'] as $item) {
+
                 $series = new Series();
                 $series->series_id = $item['series_id'];
                 $series->name = $item['name'];
@@ -54,6 +55,7 @@ class ParseMetaData extends Command
                 $newBrand->name = $brand['name'];
                 $this->info('Brand ID # ' . $newBrand->id . ' saved');
             }
+
             foreach ($data['sets'] as $set) {
                 $newSet = new Set(['name' => $set]);
                 $newSet->save();

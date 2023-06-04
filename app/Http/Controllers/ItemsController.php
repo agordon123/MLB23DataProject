@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Models\Player;
+use App\Models\HittingStats;
 use Illuminate\Http\Request;
+use App\Events\CreatePlayerEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ItemResource;
 use Illuminate\Support\Facades\Http;
@@ -28,9 +31,11 @@ class ItemsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',
-            'type' => 'required|string:mlb_card',
+            'type' => 'required|string',
             'img'=>'sometimes|string',
-            'baked_img'=>'sometimes|string'
+            'baked_img'=>'sometimes|string',
+            'rarity'=>'required|string',
+            'name'=>'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -39,8 +44,17 @@ class ItemsController extends Controller
             ]);
         };
         $item = Item::create([
-            'uuid'=>$request->item['uuid']
+            'uuid'=>$request->uuid,
+            'type'=>$request->type,
+            'img'=>$request->img,
+            'baked_img'=>$request->baked_img,
+            'rarity'=>$request->rarity
+
         ]);
+        if ($item->type === 'mlb_card') {
+            event(new CreatePlayerEvent($item));
+        }
+        return (new ItemResource($item))->response()->json(['message' => 'Item stored successfully',], 201);
     }
     /**
      * Get Items from Web
@@ -50,9 +64,58 @@ class ItemsController extends Controller
      */
     public function parseFromWeb(Request $request)
     {
+        $items = Item::all()->only('uuid');
         $request = Http::get('https://mlb23.theshow.com/apis/items.json?type=mlb_card');
         $dataJson = json_decode($request,true);
-        
+        foreach($dataJson['items'] as $item){
+            $uuid = $item['uuid'];
+            foreach($items['uuid'] as $uuidCheck){
+                if($uuid == $uuidCheck){
+                    
+                }
+            }
+        }
+    }
+    public function createPlayer(Request $request)
+    {
+        $request->validate([
+            'item_type' => 'required|string',
+            // other validation rules
+        ]);
+
+        // Check if item_type is 'mlb_card'
+        if ($request->item_type === 'mlb_card') {
+            $playerData = [
+                'ovr' => $request->input('ovr'),
+                'age' => $request->input('age'),
+                // fill in other player attributes
+            ];
+
+            $hittingStatsData = [
+                'hits' => $request->input('hits'),
+                'home_runs' => $request->input('home_runs'),
+                // fill in other hitting stats attributes
+            ];
+
+            // Create the player
+            $player = Player::create($playerData);
+
+            // Create the hitting stats and associate it with the player
+            $hittingStats = new HittingStats($hittingStatsData);
+            $player->hittingStats()->save($hittingStats);
+
+            // Create the item and associate it with the player
+            $item = new Item([
+                'type' => $request->input('item_type'),
+                // fill in other item attributes
+            ]);
+            $item->itemable()->associate($player);
+            $item->save();
+
+            return response()->json(['message' => 'Player created successfully'], 201);
+        }
+
+        return response()->json(['message' => 'Item type does not require player creation'], 400);
     }
     /**
      * Display the specified resource.

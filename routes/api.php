@@ -37,3 +37,4 @@ Route::middleware(['auth:sanctum'])->group(
 Route::resource('players', PlayerController::class);
 Route::resource('items', ItemsController::class);
 Route::resource('pitches',PitchController::class);
+Route::resource('/player/{id}/pitching_stats',[PlayerController::class]);

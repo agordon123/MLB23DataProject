@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Console\Commands\HTTPGet;
+namespace App\Console\Commands;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
-class GetDataFromMLB extends Command
+class FetchMLBDataCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'get:data {type}';
+    protected $signature = 'fetch:data-all';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Takes argument of type to pull data from the MLB23 The Show APi and saves it to JSON';
+    protected $description = 'Checks every MLB 23 API endpoint for data and updates the database';
 
     /**
      * Execute the console command.
@@ -31,6 +30,7 @@ class GetDataFromMLB extends Command
     {
         //type can be item, items, listing,listings,meta_data,roster_update_roster_updates
         $type = $this->argument('type');
+        $types = ['items','listings','meta_data','roster_update'];
         $dateTimeString = Carbon::now()->format('Y-m-d_H-i-s');
         $url = "https://mlb23.theshow.com/apis/{$type}.json";
 
@@ -38,7 +38,6 @@ class GetDataFromMLB extends Command
         $data = $itemsJson->json();
         $jsonData = json_encode($data);
         for ($i = 1; $i <= 106; $i++) {
-
         }
         Storage::put("public/json/{$type}/{$type}-{$dateTimeString}.json", $jsonData);
     }

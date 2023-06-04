@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -32,13 +33,14 @@ class GetItemsFromWeb extends Command
 
 
 
-        for ($i = 1; $i <= 106; $i++) {
-            $url = "https://mlb23.theshow.com/apis/items.json?type=mlb_card&page={$i}";
+
+            $url = "https://mlb23.theshow.com/apis/items.json";
+            $dateTimeString = Carbon::now()->format('Y-m-d_H-i-s');
             $itemsJson = Http::get($url);
             $data = $itemsJson->json();
             $jsonData = json_encode($data);
-            Storage::put("public/json/items{$i}.json", $jsonData);
+            Storage::put("public/json/items.json{$dateTimeString}", $jsonData);
 
-        }
+
     }
 }

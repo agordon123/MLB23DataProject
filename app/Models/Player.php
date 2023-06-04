@@ -18,8 +18,10 @@ class Player extends Model
 
     public function pitches()
     {
-        return $this->belongsToMany(Pitch::class, 'player_has_pitches')
+        return $this->when(!$this->is_hitter, function ($query) {
+            $query->belongsToMany(Pitch::class, 'player_has_pitches')
             ->withPivot('speed', 'control', 'movement');
+        });
     }
 
     public function quirks()
@@ -48,5 +50,20 @@ class Player extends Model
     public function scopeByUUID($query, $uuid)
     {
         return $query->where('uuid', $uuid);
+    }
+    protected function loadPitchingStatsAndPitches()
+    {
+        if (!$this->is_hitter) {
+            $this->load('pitchingStats', 'pitches');
+        }
+    }
+
+    public function newQueryWithoutScopes()
+    {
+        if (!$this->is_hitter) {
+            $this->loadPitchingStats();
+        }
+
+        return parent::newQueryWithoutScopes();
     }
 }

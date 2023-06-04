@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('roster_updates', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('update_id');    
+            $table->string('update_id');
+            $table->json('attribute_changes');
+            $table->json('position_changes');
+            $table->json('newly_added');
             $table->timestamps();
         });
     }

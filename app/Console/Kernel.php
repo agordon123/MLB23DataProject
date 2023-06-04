@@ -11,8 +11,10 @@ use App\Console\Commands\ParseHittingStats;
 use Illuminate\Console\Scheduling\Schedule;
 use App\Console\Commands\ParseFieldingStats;
 use App\Console\Commands\AttachQuirksToPlayers;
+use App\Console\Commands\GetItemsFromWeb;
 use App\Console\Commands\HTTPGet\GetDataFromMLB;
 use App\Console\Commands\ParseMetaData;
+use App\Console\Commands\ParseRosterUpdates;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -33,7 +35,9 @@ class Kernel extends ConsoleKernel
         ParseHittingStats::class,
         DeleteJsonFiles::class,
         GetDataFromMLB::class,
-        ParseMetaData::class
+        ParseMetaData::class,
+        ParseRosterUpdates::class,
+        GetItemsFromWeb::class,
 
     ];
     /**
