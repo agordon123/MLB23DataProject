@@ -73,7 +73,7 @@ class PlayerResource extends JsonResource
             'born' => $this->born,
             'is_hitter' => $this->is_hitter,
 
-            'quirks' => $this->quirks()->pluck('name'),
+            'quirks' => $this->quirks()->pluck('name','id'),
             'pitches' => $this->is_hitter ? [] : $this->pitches->map(function ($pitch) {
                 return [
                     'name' => $pitch->name,

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Date;
+
 
 class Team extends Model
 {
@@ -14,7 +14,7 @@ class Team extends Model
 
     public function items()
     {
-        return $this->belongsTo(Item::class, 'team_id', 'id');
+        return $this->belongsTo(Item::class);
     }
     public function scopeSearchByName($query, $name)
     {

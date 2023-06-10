@@ -13,4 +13,5 @@ class Listing extends Model
     {
         return $this->hasOne(Item::class);
     }
+    
 }

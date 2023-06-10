@@ -2,10 +2,28 @@
 
 namespace App\Console\Commands;
 
-use App\Models\RosterUpdate;
+use Exception;
+use App\Models\Item;
+use App\Models\Team;
+use App\Models\Pitch;
+use App\Models\Quirk;
+use App\Models\Player;
+use App\Models\Series;
+use App\Jobs\ProcessItem;
+use App\Jobs\ParseDataJob;
+use App\Jobs\CreateItemJob;
+use Illuminate\Http\Request;
+use App\Jobs\CreatePlayerJob;
+use App\Models\PitchingStats;
+use Illuminate\Bus\Batchable;
 use Illuminate\Console\Command;
+use App\Events\CreatePlayerEvent;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\MLBAPIController;
+use App\Http\Controllers\PlayerController;
 
 class ParseRosterUpdates extends Command
 {
@@ -14,7 +32,7 @@ class ParseRosterUpdates extends Command
      *
      * @var string
      */
-    protected $signature = 'parse:updates';
+    protected $signature = 'roster:update';
 
     /**
      * The console command description.
@@ -29,18 +47,36 @@ class ParseRosterUpdates extends Command
     public function handle()
     {
 
-        $directory ='public/json/roster_updates';
-        $fileName = 'roster_updates-2023-06-03_21-38-51.json';
-        $basicData = Storage::get($directory.$fileName);
-        dd($basicData);
-        $basicJsonData = json_decode($basicData,true);
+        $response = Http::get('https://mlb23.theshow.com/apis/roster_update.json?id=7');
+        $data = $response->json();
 
 
-        foreach($basicJsonData['roster_updates'] as $rosterData){
-            $id = $rosterData['id'];
-            $name = $rosterData['name'];
-            $update = new RosterUpdate(['update_id'=>$id,'name'=>$name]);
-            $update->save();
+
+      //  $attributeChange = $data['attribute_changes'];
+        $newlyAdded = $data['newly_added'];
+      //  $positionChange = $data['position_changes'];
+
+        if (isset($data['newly_added'])) {
+
+            $newlyAdded = $data['newly_added'];
+
+
+
+            $uuids = []; // Initialize the array outside the loop
+
+            foreach ($newlyAdded as $items) {
+                $uuid  = $items['obfuscated_id'];
+                $player = Player::where('uuid',$uuid);
+                $uuids[] = $uuid; // Add each uuid to the array
+            }
+
+            // Dispatch the batch outside the loop, after all uuids have been added to the array
+            $batch = Bus::batch(array_map(function ($uuid) {
+                return new ProcessItem($uuid);
+            }, $uuids))->dispatch();
+
+
+
         }
     }
 }

@@ -7,17 +7,17 @@
         "bat_hand"  => 'string',
         "throw_hand" => 'string',
         "is_hitter" => 'bool',
-        "stamina"   => 'numeric',
-        "pitching_clutch" => 'numeric',
-        "hits_per_bf" => 'numeric',
-        "k_per_bf" => 'numeric',
-        "bb_per_bf" => 'numeric',
-        "hr_per_bf" => 'numeric',
-        "pitch_velocity" => 'numeric',
-        "pitch_control" => 'numeric',
-        "pitch_movement" => 'numeric',
-        "contact_left" => 'numeric',
-        "contact_right" => 'numeric',
+        "stamina"           => 'numeric',
+        "pitching_clutch"   => 'numeric',
+        "hits_per_bf"       => 'numeric',
+        "k_per_bf"          => 'numeric',
+        "bb_per_bf"         => 'numeric',
+        "hr_per_bf"         => 'numeric',
+        "pitch_velocity"     => 'numeric',
+        "pitch_control"     => 'numeric',
+        "pitch_movement"    => 'numeric',
+        "contact_left"      => 'numeric',
+        "contact_right"     => 'numeric',
         "power_left" => 'numeric',
         "power_right" => 'numeric',
         "plate_vision" => 'numeric',
@@ -34,3 +34,526 @@
         "speed" => 'numeric',
         "baserunning_ability" => 'numeric',
         "baserunning_aggression" => 'numeric',
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Item;
+use App\Models\Player;
+use App\Models\Series;
+use Illuminate\Log\Logger;
+use Illuminate\Http\Request;
+use App\Http\Resources\ItemResource;
+use App\Models\FieldingStats;
+use App\Models\HittingStats;
+use App\Models\PitchingStats;
+use App\Models\Team;
+
+class MLBAPIController extends Controller
+{
+    public function storeData(Request $request)
+    {
+        // Access the parsed data from the request
+        $data = $request->input('parsedData');
+        $type = $request->input('type');
+        $uuids =    Item::all()->pluck('uuid')->toArray();
+
+        if ($type == 'items') {
+            $exists = false;
+            foreach ($data['items'] as $item) {
+                foreach ($uuids as $oldUUID) {
+                    if ($item['uuid'] == $oldUUID) {
+                        $exists = true;
+                        break;
+                    }
+                    if ($exists) {
+                        Logger('The UUID already exists in the DB.' . ['uuid' => $oldUUID]);
+                    } else {
+                        break;
+                    }
+                }
+                if (!$item['type'] == 'mlb_card' || !$item['type'] == 'stadium') {
+                    if ($item['series'] != null) {
+                        $series = Series::where('name', $item['series'])->first();
+                        $newItem = new Item([
+                            'uuid' => $item['uuid'], 'name' => $item['name'], 'type' => $item['type'], 'rarity' => $item['rarity'], 'img' => $item['img'],
+                            'baked_img' => $item['baked_img']
+                        ]);
+                        if ($series != null) {
+                            $newItem->series($series);
+                        }
+
+                        $newItem->save();
+                    }
+                }
+                if ($item['type'] == 'mlb_card') {
+                    $series = Series::where('name', $item['series'])->first();
+                    $team = Team::where('name',$item['team_name'])->first();
+                    $newItem = new Item([
+                        'uuid' => $item['uuid'], 'name' => $item['name'], 'type' => $item['type'], 'rarity' => $item['rarity'], 'img' => $item['img'],
+                        'baked_img' => $item['baked_img']
+                    ]);
+                    if ($series != null) {
+                        $newItem->series($series);
+                    }
+                    if($team!=null){
+
+                    }
+                    $newItem->save();
+
+                    $player =  Player::create(
+                        [
+                            'item_id' => $newItem->id,
+                            'ovr' => $item['ovr'],
+                            'age' => $item['age'],
+                            'height' => $item['height'],
+                            'weight' => $item['weight'],
+                            'bat_hand' => $item['bat_hand'],
+                            'throw_hand' => $item['throw_hand'],
+                            'is_hitter' => $item['is_hitter'],
+
+                        ]
+                    );
+                    $player->save();
+                    $newItem->player($player);
+
+                    $hittingStats =  HittingStats::create([
+                        "contact_left"  => $item['contact_left'],
+                        "contact_right" => $item['contact_right'],
+                        "power_left" => $item['power_left'],
+                        "power_right" => $item['power_right'],
+                        "plate_vision" => $item['plate_vision'],
+                        "plate_discipline" => $item['plate_discipline'],
+                        "batting_clutch" =>$item['batting_clutch'],
+                        "bunting_ability" => $item['bunting_ability'],
+                        "drag_bunting_ability" => $item['drag_bunting_ability'],
+                    ]);
+                    $player->hittingStats($hittingStats);
+                    $fieldingStats = FieldingStats::create([
+                        "fielding_ability" => $item['fielding_ability'],
+                        "arm_strength" => $item['arm_strength'],
+                        "arm_accuracy" => $item['arm_accuracy'],
+                        "reaction_time" => $item['reaction_time'],
+                        "blocking" => $item['blocking'],
+                        "speed" => $item['speed'],
+                        "baserunning_ability" => $item['baserunning_ability'],
+                        "baserunning_aggression" => $item['baserunning_aggression'],
+                        'hitting_durability'=>$item['hitting_durability']
+                    ]);
+                    $player->fieldingStats($fieldingStats);
+                    if($player['is_hitter']==false){
+                        $pitchingStats = new PitchingStats([
+                            "stamina"           => $item['stamina'],
+                            "pitching_clutch"   => $item['pitching_clutch'],
+                            "hits_per_bf"       => $item['hits_per_bf'],
+                            "k_per_bf"          => $item['k_per_bf'],
+                            "bb_per_bf"         => $item['bb_per_bf'],
+                            "hr_per_bf"         => $item['hr_per_bf'],
+                            "pitch_velocity"     => $item['pitch_velocity'],
+                            "pitch_control"     => $item['pitch_control'],
+                            "pitch_movement"    => $item['pitch_movement'],
+                        ]);
+                        $player->pitchingStats($pitchingStats);
+                    }
+
+                }
+            }
+        }
+        if ($type == 'roster_update') {
+            foreach ($data as $key => $value) {
+                if ($data[$key] == 'attribute_changes') {
+                    $uuid = $data['obfuscated_id'];
+                    $itemCheck = Item::where('uuid', $uuid)->first();
+                    if ($itemCheck != $uuid) {
+                        dd($data);
+                    }
+                }
+            }
+        }
+        // Store the data in the database using appropriate models and logic
+        // Example: Use the desired model and store the data
+        // YourModel::create($parsedData);
+
+        // Perform any additional processing or validation as needed
+
+        // Return a response or perform any other actions
+        return response()->json(['message' => 'Data stored successfully']);
+    }
+}
+                /*
+
+                    $series = $data['series'];
+                    $seriesId = Series::where('name', $series);
+                    $uuid = $data['uuid'];
+                    $team = $data['team'];
+                    $rarity =   $data['rarity'];
+                    $name = $data['name'];
+                    $img = $data['img'];
+                    $baked_img = $data['baked_img'];
+                    $type = $data['type'];
+                    //player model fields
+                    $th = $data['throw_hand'];
+                    $weight = $data['weight'];
+                    $is_hitter = $data['is_hitter'];
+                    $position  = $data['display_position'];
+                    $secondary_position = $data['display_secondary_positions'];
+                    $age = $data['age'];
+                    $height = $data['height'];
+                    $bh = $data['bat_hand'];
+                    $ovr = $data['ovr'];
+                    //hitting stat fields
+                    $contact_left =     $data['contact_left'];
+                    $contact_right =    $data['contact_right'];
+                    $power_left =       $data['power_left'];
+                    $power_right =      $data['power_right'];
+                    $plate_vision =     $data['plate_vision'];
+                    $plate_discipline = $data['plate_discipline'];
+                    $batting_clutch =   $data['batting_clutch'];
+                    $bunting_ability =  $data['bunting_ability'];
+                    $drag_bunting_ability = $data['drag_bunting_ability'];
+                    //fielding stat fields
+                    $baserunning_ability = $data['baserunning_ability'];
+                    $baserunning_aggression = $data['baserunning_aggression'];
+                    $fielding_ability = $data['fielding_ability'];
+                    $durability = $data['fielding_durability'];
+                    $armAcc = $data['arm_accuracy'];
+                    $armStrength = $data['arm_strength'];
+                    $reaction = $data['reaction_time'];
+                    $blocking = $data['blocking'];
+                    $speed = $data['speed'];
+                    $hitting_durability = $data['hitting_durability'];
+                    //arrays of stats, quirks, pitches
+                    $fielding_stats = [
+                        'baserunning_ability' => $baserunning_ability, 'baserunning_aggression' => $baserunning_aggression, 'fielding_ability' => $fielding_ability,
+                        'durability' => $durability, 'arm_accuracy' => $armAcc, 'arm_strength' => $armStrength, 'reaction' => $reaction, 'blocking' => $blocking, 'speed' => $speed, 'hiting_durability' => $hitting_durability,
+                        'fielding_durability' => $durability
+                    ];
+
+                    $hittingStats = [
+                        'contact_left' => $contact_left, 'contact_right' => $contact_right, 'power_left' => $power_left, 'power_right' => $power_right,
+                        'plate_vision' => $plate_vision, 'plate_discipline' => $plate_discipline, 'batting_clutch' => $batting_clutch, 'bunting_ability' => $bunting_ability,
+                        'drag_bunting_ability' => $drag_bunting_ability
+                    ];
+                    $quirks = $data['quirks'];
+                    $pitches = $data['pitches'];
+
+
+                    try {
+                        DB::beginTransaction();
+                        $itemModel = new Item();
+                        $itemModel->uuid = $uuid;
+                        $itemModel->type = $type;
+                        $itemModel->img = $img;
+                        $itemModel->baked_img = $baked_img;
+                        $itemModel->rarity = $rarity;
+                        $itemModel->name = $name;
+                        $itemModel->team($team);
+                        $itemModel->series($seriesId);
+                        $itemModel->save();
+
+                        $itemId = $itemModel->id;
+
+                        $player = new Player();
+                        $player->item_id = $itemId;
+                        $player->uuid = $uuid;
+                        $player->ovr = $ovr;
+                        $player->age = $age;
+                        $player->height = $height;
+                        $player->weight = $weight;
+                        $player->bat_hand = $bh;
+                        $player->throw_hand = $th;
+                        $player->position = $position;
+                        $player->secondary_positions = $secondary_position;
+                        $player->is_hitter = $is_hitter;
+                        $player->save();
+                        $itemModel->player()->associate($player);
+                        $itemModel->team()->associate($team);
+                        $itemModel->series()->associate($seriesId);
+                        if (!$is_hitter) {
+                            $pitchingStats = new PitchingStats();
+
+                            $pitchingStats->player_id = $player->id;
+                            $pitchingStats->stamina = $data['stamina'];
+                            $pitchingStats->pitching_clutch = $data['pitching_clutch'];
+                            $pitchingStats->hits_per_bf = $data['hits_per_bf'];
+                            $pitchingStats->bb_per_bf = $data['bb_per_bf'];
+                            $pitchingStats->pitch_velocity = $data['pitch_velocity'];
+                            $pitchingStats->pitch_control = $data['pitch_control'];
+                            $pitchingStats->pitch_movement = $data['pitch_movement'];
+                            $pitchingStats->k_per_bf = $data['k_per_bf'];
+                            $player->pitchingStats()->save($pitchingStats);
+                            foreach ($pitches as $pitchData) {
+                                $name = $pitchData['name'];
+                                $speed = $pitchData['speed'];
+                                $control = $pitchData['control'];
+                                $break = $pitchData['movement'];
+
+                                $pitch = Pitch::where('name', $name)->first();
+
+                                if ($pitch) {
+                                    try {
+                                        DB::beginTransaction();
+                                        $player->pitches()->attach($pitch->id, [
+                                            'speed' => $speed,
+                                            'control' => $control,
+                                            'movement' => $break
+                                        ]);
+                                        DB::commit();
+                                        $this->info('Page  Record saved, next');
+                                    } catch (Exception $e) {
+                                        DB::rollback();
+                                        $this->info($e);
+                                    }
+                                }
+                            }
+                        }
+
+
+                        DB::commit();
+
+                        // Other processing or response
+                    } catch (Exception $e) {
+                        DB::rollback();
+                        $this->info($e);
+                    }
+                 //   $apiController = new MLBAPIController();
+                 //   $apiController->addStatsToUpdate(new Request(['player' => $player->id, 'quirks' => $quirks, 'hitting_stats' => $hittingStats, 'fielding_stats' => $fielding_stats]));
+                } */
+// Step 1: Fetch data from API
+$url = 'https://mlb23.theshow.com/apis/item.json?uuid={uuid}';
+$data = file_get_contents($url);
+$data = json_decode($data);
+
+// Step 2: Parse the data and store it into appropriate arrays
+$items = [];
+$players = [];
+$hitting_stats = [];
+$fielding_stats = [];
+$pitching_stats = [];
+
+foreach ($data as $item) {
+    // Extract relevant information from the item
+    $name = $item->name;
+    $uuid = $item->uuid;
+    $team = $item->team;
+    $series = $item->series;
+    $rarity = $item->rarity;
+    $type = $item->type;
+    $stats = $item->stats;
+
+    // Store item information into the Items array
+    $items[] = [
+        'name' => $name,
+        'uuid' => $uuid,
+        'team' => $team,
+        'series' => $series,
+        'rarity' => $rarity,
+        'type' => $type,
+    ];
+
+    // Check if the item is a player or not
+    if ($type == 'player') {
+        // Extract player-specific information from the item
+        $ovr = $stats->ovr;
+        $age = $stats->age;
+        $bat_hand = $stats->bat_hand;
+        $throw_hand = $stats->throw_hand;
+        $is_hitter = $stats->is_hitter;
+        $height = $stats->height;
+        $weight = $stats->weight;
+
+        // Store player information into the Players array
+        $players[] = [
+            'uuid' => $uuid,
+            'ovr' => $ovr,
+            'age' => $age,
+            'bat_hand' => $bat_hand,
+            'throw_hand' => $throw_hand,
+            'is_hitter' => $is_hitter,
+            'height' => $height,
+            'weight' => $weight,
+        ];
+
+        // Extract hitting stats information from the item
+        $contact_left = $stats->contact_left;
+        $contact_right = $stats->contact_right;
+        $power_left = $stats->power_left;
+        $power_right = $stats->power_right;
+        $batting_clutch = $stats->batting_clutch;
+        $vision = $stats->vision;
+        $bunting_ability = $stats->bunting_ability;
+        $drag_bunting_ability = $stats->drag_bunting_ability;
+
+        // Store hitting stats information into the Hitting Stats array
+        $hitting_stats[] = [
+            'uuid' => $uuid,
+            'contact_left' => $contact_left,
+            'contact_right' => $contact_right,
+            'power_left' => $power_left,
+            'power_right' => $power_right,
+            'batting_clutch' => $batting_clutch,
+            'vision' => $vision,
+            'bunting_ability' => $bunting_ability,
+            'drag_bunting_ability' => $drag_bunting_ability,
+        ];
+
+        // Extract fielding stats information from the item
+        $fielding_ability = $stats->fielding_ability;
+        $durability = $stats->durability;
+        $hitting_durability = $stats->hitting_durability;
+        $speed = $stats->speed;
+        $baserunning_ability = $stats->baserunning_ability;
+        $aggression = $stats->aggression;
+        $arm_strength = $stats->arm_strength;
+        $reaction = $stats->reaction;
+        $arm_accuracy = $stats->arm_accuracy;
+
+        // Store fielding stats information into the Fielding Stats array
+        $fielding_stats[] = [
+            'uuid' => $uuid,
+            'fielding_ability' => $fielding_ability,
+            'durability' => $durability,
+            'hitting_durability' => $hitting_durability,
+            'speed' => $speed,
+            'baserunning_ability' => $baserunning_ability,
+            'aggression' => $aggression,
+            'arm_strength' => $arm_strength,
+            'reaction' => $reaction,
+            'arm_accuracy' => $arm_accuracy,
+        ];
+
+        // Check if the player is a pitcher or not
+        if (!$is_hitter) {
+            // Extract pitching stats information from the item
+            $speed = $stats->speed;
+            $control = $stats->control;
+            $movement = $stats->movement;
+            $h_9 = $stats->h_9;
+            $k_9 = $stats->k_9;
+            $bb_9 = $stats->bb_9;
+            $hr_9 = $stats->hr_9;
+
+            // Store pitching stats information into the Pitching Stats array
+            $pitching_stats[] = [
+                'uuid' => $uuid,
+                'speed' => $speed,
+                'control' => $control,
+                'movement' => $movement,
+                'h_9' => $h_9,
+                'k_9' => $k_9,
+                'bb_9' => $bb_9,
+                'hr_9' => $hr_9,
+            ];
+        }
+    }
+}
+      $response = Http::get('https://mlb23.theshow.com/apis/item.json?uuid=' . $this->uuid);
+        $data = $response->json();
+        $player =  Player::where('uuid', $data['uuid'])->first();
+        $quirks = $data['quirks'];
+        $pitches = $data['pitches'];
+
+        if (!$player->is_hitter) {
+            $contact_left = $data['contact_left'];
+            $contact_right = $data['contact_right'];
+            $power_left = $data['power_left'];
+            $power_right = $data['power_right'];
+            $plate_vision = $data['plate_vision'];
+            $plate_discipline = $data['plate_discipline'];
+            $batting_clutch = $data['batting_clutch'];
+            $bunting_ability = $data['bunting_ability'];
+            $drag_bunting_ability = $data['drag_bunting_ability'];
+
+            $baserunning_ability = $data['baserunning_ability'];
+            $baserunning_aggression = $data['baserunning_aggression'];
+            $fielding_ability = $data['fielding_ability'];
+            $durability = $data['fielding_durability'];
+            $armAcc = $data['arm_accuracy'];
+            $armStrength = $data['arm_strength'];
+            $reaction = $data['reaction_time'];
+            $blocking = $data['blocking'];
+            $speed = $data['speed'];
+            $hitting_durability = $data['hitting_durability'];
+            $fieldingStats = [
+                'baserunning_ability' => $baserunning_ability, 'baserunning_aggression' => $baserunning_aggression, 'fielding_ability' => $fielding_ability,
+                'durability' => $durability, 'arm_accuracy' => $armAcc, 'arm_strength' => $armStrength, 'reaction' => $reaction, 'blocking' => $blocking, 'speed' => $speed, 'hiting_durability' => $hitting_durability,
+                'fielding_durability' => $durability
+            ];
+
+            $hittingStats = [
+                'contact_left' => $contact_left, 'contact_right' => $contact_right, 'power_left' => $power_left, 'power_right' => $power_right,
+                'plate_vision' => $plate_vision, 'plate_discipline' => $plate_discipline, 'batting_clutch' => $batting_clutch, 'bunting_ability' => $bunting_ability,
+                'drag_bunting_ability' => $drag_bunting_ability
+            ];
+            $player->fieldingStats($fieldingStats)->save();
+            $player->hittingStats($hittingStats)->save();
+            $pitchingStats = new PitchingStats();
+
+            $pitchingStats->player_id = $player->id;
+            $pitchingStats->stamina = $data['stamina'];
+            $pitchingStats->pitching_clutch = $data['pitching_clutch'];
+            $pitchingStats->hits_per_bf = $data['hits_per_bf'];
+            $pitchingStats->bb_per_bf = $data['bb_per_bf'];
+            $pitchingStats->pitch_velocity = $data['pitch_velocity'];
+            $pitchingStats->pitch_control = $data['pitch_control'];
+            $pitchingStats->pitch_movement = $data['pitch_movement'];
+            $pitchingStats->k_per_bf = $data['k_per_bf'];
+            $player->pitchingStats()->save($pitchingStats);
+            foreach ($pitches as $pitchData) {
+                $name = $pitchData['name'];
+                $speed = $pitchData['speed'];
+                $control = $pitchData['control'];
+                $break = $pitchData['movement'];
+                $pitch = Pitch::where('name', $name)->first();
+                if ($pitch) {
+                    $player->pitches()->attach($pitch->id, [
+                        'speed' => $speed,
+                        'control' => $control,
+                        'movement' => $break
+                    ]);
+                }
+            }
+            foreach ($quirks as $item) {
+                $quirks = $item['quirks'];
+                foreach ($quirks as $quirkData) {
+                    $quirkName = $quirkData['name'];
+                    $dbQuirk = Quirk::byName($quirkName)->first();
+                    if ($dbQuirk) {
+                        $player->quirks()->attach($dbQuirk->id);
+                    }
+                }
+            }
+        } else {
+            $contact_left = $data['contact_left'];
+            $contact_right = $data['contact_right'];
+            $power_left = $data['power_left'];
+            $power_right = $data['power_right'];
+            $plate_vision = $data['plate_vision'];
+            $plate_discipline = $data['plate_discipline'];
+            $batting_clutch = $data['batting_clutch'];
+            $bunting_ability = $data['bunting_ability'];
+            $drag_bunting_ability = $data['drag_bunting_ability'];
+
+            $baserunning_ability = $data['baserunning_ability'];
+            $baserunning_aggression = $data['baserunning_aggression'];
+            $fielding_ability = $data['fielding_ability'];
+            $durability = $data['fielding_durability'];
+            $armAcc = $data['arm_accuracy'];
+            $armStrength = $data['arm_strength'];
+            $reaction = $data['reaction_time'];
+            $blocking = $data['blocking'];
+            $speed = $data['speed'];
+            $hitting_durability = $data['hitting_durability'];
+            foreach ($quirks as $item) {
+                $quirks = $item['quirks'];
+                foreach ($quirks as $quirkData) {
+                    $quirkName = $quirkData['name'];
+                    $dbQuirk = Quirk::byName($quirkName)->first();
+                    if ($dbQuirk) {
+                        $player->quirks()->attach($dbQuirk->id);
+                    }
+                }
+            }
+        }
+        gc_collect_cycles();

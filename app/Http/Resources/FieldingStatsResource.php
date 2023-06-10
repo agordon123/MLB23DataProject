@@ -15,7 +15,7 @@ class FieldingStatsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'player_id'=>$request->player_id,
+            'player_id'=>$this->player_id,
             'fielding_ability' => $this->fielding_ability,
             'arm_strength' => $this->arm_strength,
             'arm_accuracy' => $this->arm_accuracy,

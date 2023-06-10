@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RosterUpdateResource;
 use App\Models\RosterUpdate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RosterUpdateController extends Controller
 {
@@ -12,15 +14,16 @@ class RosterUpdateController extends Controller
      */
     public function index()
     {
-        //
+        $updates = RosterUpdate::all();
+        return (new RosterUpdateResource($updates))->response()->setStatusCode(200);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+
     }
 
     /**
@@ -28,7 +31,14 @@ class RosterUpdateController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'update_id' => 'required|integer|unique',
+            'type' => 'required|string',
+            'img' => 'sometimes|string',
+            'baked_img' => 'sometimes|string',
+            'rarity' => 'required|string',
+            'name' => 'required|string'
+        ]);
     }
 
     /**
@@ -52,7 +62,6 @@ class RosterUpdateController extends Controller
      */
     public function update(Request $request, RosterUpdate $rosterUpdate)
     {
-        //
     }
 
     /**
@@ -61,5 +70,13 @@ class RosterUpdateController extends Controller
     public function destroy(RosterUpdate $rosterUpdate)
     {
         //
+    }
+    public function updatePlayers(Request $request, RosterUpdate $rosterUpdate)
+    {
+        $rosterUpdate = RosterUpdate::find($request->id)->first();
+        $players = $rosterUpdate->players;
+    }
+    public function findPlayersByUpdate(Request $request, RosterUpdate $rosterUpdate)
+    {
     }
 }

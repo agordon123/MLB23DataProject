@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\CreatePitcherEvent;
 use App\Events\CreatePlayerEvent;
+use App\Listeners\CreatePitcherListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\CreatePlayerListener;
@@ -20,9 +22,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        CreatePlayerEvent::class => [
-            CreatePlayerListener::class,
-        ],
+
     ];
 
     /**
@@ -38,6 +38,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents(): bool
     {
-        return false;
+        return true;
     }
 }

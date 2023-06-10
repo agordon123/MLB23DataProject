@@ -18,4 +18,9 @@ yarn-error.log
 /.idea
 /.vscode
 /nuxtclient
-
+/apache
+/.vs
+/nginx
+/breeze-next
+/nuxtclient
+/ssl

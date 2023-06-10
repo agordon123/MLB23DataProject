@@ -14,16 +14,23 @@ class Player extends Model
         'ovr', 'age', 'height', 'weight', 'bat_hand', 'throw_hand', 'is_hitter', 'position', 'secondary_positions', 'uuid'
     ];
 
-    protected $with = ['playerHittingStats', 'playerFieldingStats'];
-
+   
     public function pitches()
     {
         return $this->when(!$this->is_hitter, function ($query) {
             $query->belongsToMany(Pitch::class, 'player_has_pitches')
-            ->withPivot('speed', 'control', 'movement');
+                ->withPivot('speed', 'control', 'movement');
         });
     }
+    public function rosterUpdate()
+    {
+        return $this->belongsTo(RosterUpdate::class);
+    }
 
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
     public function quirks()
     {
         return $this->belongsToMany(Quirk::class, 'player_has_quirks');
@@ -36,16 +43,15 @@ class Player extends Model
     {
         return $this->hasOne(HittingStats::class);
     }
-
+    public function itemPlayerObject()
+    {
+        return $this->belongsTo(ItemPlayerObject::class);
+    }
     public function fieldingStats()
     {
         return $this->hasOne(FieldingStats::class);
     }
 
-    public function item()
-    {
-        return $this->morphOne(Item::class, 'itemable');
-    }
 
     public function scopeByUUID($query, $uuid)
     {
@@ -57,7 +63,10 @@ class Player extends Model
             $this->load('pitchingStats', 'pitches');
         }
     }
-
+    public function series()
+    {
+        return $this->belongsTo(Series::class);
+    }
     public function newQueryWithoutScopes()
     {
         if (!$this->is_hitter) {

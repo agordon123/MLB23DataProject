@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use ItemStatsCast;
+
 use App\Models\Team;
 use App\Models\Player;
+use App\Models\Series;
 use App\Models\Listing;
 use App\Models\Stadium;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,7 @@ class Item extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'type', 'uuid', 'rarity', 'team', 'name', 'img', 'baked_img','item_stats'
+        'type', 'uuid', 'rarity', 'team', 'name', 'img', 'baked_img','item_stats','series_id'
     ];
 
     protected $casts = [
@@ -25,11 +27,15 @@ class Item extends Model
         'team' => 'string',
         'img' => 'string', 'item_stats' => ItemStatsCast::class,
     ];
-    protected $attributes = ['type' => 'mlb_card'];
     protected $table = 'items';
     public function player()
     {
-        return $this->belongsTo(Player::class);
+        return $this->hasOne(Player::class);
+    }
+
+    public function rosterUpdates()
+    {
+        return $this->hasMany(RosterUpdate::class, 'item_id');
     }
 
     public function team()
@@ -43,7 +49,7 @@ class Item extends Model
     }
     public function itemable()
     {
-        return $this->morphTo(Item::class);
+        return $this->morphTo();
     }
     public function imageable()
     {
@@ -51,5 +57,9 @@ class Item extends Model
     }
     public function listing(){
         return $this->hasMany(Listing::class);
+    }
+    public function series()
+    {
+        return $this->belongsTo(Series::class);
     }
 }

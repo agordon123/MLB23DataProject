@@ -9,7 +9,7 @@ use App\Models\Team;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Log;
 class ParseItems extends Command
 {
     /**
@@ -36,20 +36,28 @@ class ParseItems extends Command
         // Read the contents of items.json
 
 
-        $directory = 'public/json/';
-        $filename = 'items';
 
 
 
-        for ($i = 1; $i <= 106; $i++) {
-            $itemsJson = Storage::get($directory . $filename . $i . '.json');
+        for ($i = 108; $i <= 112; $i++) {
+            $directory = 'public/json/';
+            $filename = "data_items_page{$i}.json";
+
+            $itemsJson = Storage::get($directory . $filename);
             $data = json_decode($itemsJson, true);
-            $teams = Team::all();
+     
+            $currentUUIDs = Item::all()->pluck('uuid')->toArray();
             // Loop through each item and store in the database as an item first
             //above code sets up items.json to parse for player,pitcher,items, and pitch models
             foreach ($data['items'] as $item) {
 
+
                 $uuid = $item['uuid'];
+                if (in_array($uuid, $currentUUIDs)) {
+                    // The UUID already exists in the DB
+                    Log::info('The UUID already exists in the DB: ' . $item['uuid']);
+                    continue;
+                }
                 $type =   $item['type'];
                 $rarity =   $item['rarity'];
                 $name = $item['name'];
@@ -75,6 +83,7 @@ class ParseItems extends Command
                     $itemModel->baked_img = $baked_img;
                     $itemModel->rarity = $rarity;
                     $itemModel->name = $name;
+                    $itemModel->team();
                     $itemModel->save();
 
                     $itemId = $itemModel->id;

@@ -31,16 +31,32 @@ class GetItemsFromWeb extends Command
 
         //this for loop creates a json file for every page of mlb_cards from theshow.com and stores it in storage/app/public/json
 
+        $directory = 'public/json/roster_update/';
 
+        $jsonFilePath = Storage::get($directory . 'roster_update7.json');
 
+        $dataJson = json_decode($jsonFilePath, true);
+        if (isset($dataJson['newly_added'])) {
 
-            $url = "https://mlb23.theshow.com/apis/items.json";
-            $dateTimeString = Carbon::now()->format('Y-m-d_H-i-s');
+            $newlyAdded = $dataJson['newly_added'];
+
+            foreach ($newlyAdded as $items) {
+                $uuid  = $items['obfuscated_id'];
+                $newPlayer = Http::get("https://mlb23.theshow.com/apis/item.json?uuid={$uuid}");
+                $data = $newPlayer->json();
+                $jsonData = json_encode($data);
+                Storage::put("public/json/newly_added/{$uuid}.json", $jsonData);
+
+            }
+        }
+      /*  $uuid = $this->argument();
+            $url = "https://mlb23.theshow.com/apis/items?uuid={$uuid}.json";
+
             $itemsJson = Http::get($url);
             $data = $itemsJson->json();
             $jsonData = json_encode($data);
-            Storage::put("public/json/items.json{$dateTimeString}", $jsonData);
+            Storage::put("public/json/items.json", $jsonData);
 
-
+*/
     }
 }
