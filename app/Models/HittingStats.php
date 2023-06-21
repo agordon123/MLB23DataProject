@@ -17,4 +17,59 @@ class HittingStats extends Model
     {
         return $this->belongsTo(Player::class);
     }
+    public function setContactLeftAttribute($key, $value)
+    {
+
+        if ($key === 'CON L') {
+            $this->attributes['contact_left'] = $value;
+        }
+    }
+    public function setContactRightAttribute($key, $value)
+    {
+        if ($key == 'CON R') {
+            $this->attributes['contact_right'] = $value;
+        }
+    }
+    public function setPowerLeftAttribute($key, $value)
+    {
+        if ($key == 'POW L') {
+            $this->attributes['power_left'] = $value;
+        }
+    }
+    public function setPowerRightAttribute($key, $value)
+    {
+        if ($key == 'POW R') {
+            $this->attributes['power_right'] = $value;
+        }
+    }
+    public function setPlateVisionAttribute($key, $value)
+    {
+        if ($key == 'VIS') {
+            $this->attributes['plate_vision'] = $value;
+        }
+    }
+    public function setPlateDisciplineAttribute($key, $value)
+    {
+        if ($key == 'DISC') {
+            $this->attributes['plate_discipline'] = $value;
+        }
+    }
+    public function setBattingClutchAttribute($key, $value)
+    {
+        if ($key == 'CLU') {
+            $this->attributes['contact_right'] = $value;
+        }
+    }
+    public function setBuntingAbilityAttribute($key, $value)
+    {
+        if ($key == 'BNT') {
+            $this->attributes['bunting_ability'] = $value;
+        }
+    }
+    public function setDragBuntingAbilityAttribute($key, $value)
+    {
+        if ($key == 'DBUNT') {
+            $this->attributes['drag_bunting_ability'] = $value;
+        }
+    }
 }

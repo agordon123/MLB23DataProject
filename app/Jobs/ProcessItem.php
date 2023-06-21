@@ -2,18 +2,18 @@
 
 namespace App\Jobs;
 
-use App\Models\Item;
+
 use App\Models\Player;
-use App\Jobs\CreateItemJob;
+
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class ProcessItem implements ShouldQueue
 {
@@ -34,6 +34,7 @@ class ProcessItem implements ShouldQueue
     {
         $response = Http::get('https://mlb23.theshow.com/apis/item.json?uuid=' . $this->uuid);
         $data = $response->json();
+        
         $type =   $data['type'];
         $rarity =   $data['rarity'];
         $name = $data['name'];

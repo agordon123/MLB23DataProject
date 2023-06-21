@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Player;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 class PitchingStats extends Model
 {
     use HasFactory;
@@ -27,7 +28,30 @@ class PitchingStats extends Model
     {
         return $this->belongsTo(Player::class);
     }
-
+    public function setKperNineAttribute($key, $value)
+    {
+    }
+    public function setHperNineAttribute($key, $value)
+    {
+    }
+    public function setPitchingClutchAttribute($key, $value)
+    {
+    }
+    public function setBBPperNineAttribute($key, $value)
+    {
+    }
+    public function setPitchVelocityAttribute($key, $value)
+    {
+    }
+    public function setPitchMovementAttribute($key, $value)
+    {
+    }
+    public function setPitchControlAttribute($key, $value)
+    {
+    }
+    public function setStaminaAttribute($key, $value)
+    {
+    }
 
 
 
