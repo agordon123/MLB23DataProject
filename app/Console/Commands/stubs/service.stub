@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Services;
+
+class {{className}}
+{
+    public function __construct()
+    {
+        // Service constructor
+    }
+
+    // Your service methods
+}

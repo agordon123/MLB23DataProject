@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('player_fielding_stats', function (Blueprint $table) {
-            
+            $table->foreignIdFor(Player::class, 'player_id');
             $table->integer('hitting_durability');
             $table->integer('fielding_durability');
             $table->integer('fielding_ability');

@@ -13,6 +13,7 @@ use App\Models\FieldingStats;
 use App\Models\PitchingStats;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Queue\SerializesModels;
@@ -42,20 +43,26 @@ class CreatePlayerJob implements ShouldQueue
     {
 
         $data = $this->data;
-        $dbItem = Item::where('uuid',$this->data['uuid'])->first();
 
-        $player = Player::create([
-            'item_id' => $dbItem->id,
-            'ovr' => $data['ovr'],
-            'age' => $data['age'],
-            'height' => $data['height'],
-            'weight' => $data['weight'],
-            'bat_hand' => $data['bat_hand'],
-            'throw_hand' => $data['throw_hand'],
-            'is_hitter' => $data['is_hitter'],
-        ]);
+
+        $player = new Player();
+
+        $player->uuid = $data['uuid'];
+        $player->ovr =  $data['ovr'];
+        $player->age = $data['age'];
+        $player->img = $data['ovr'];
+        $player->baked_img = $data['baked_img'];
+        $player->rarity = $data['rarity'];
+        $player->name = $data['name'];
+        $player->height = $data['height'];
+        $player->weight = $data['weight'];
+        $player->bat_hand = $data['bat_hand'];
+        $player->throw_hand = $data['throw_hand'];
+        $player->position = $data['display_position'];
+        $player->secondary_positions = $data['display_secondary_position'];
+        $player->is_hitter = $data['is_hitter'];
         $player->save();
-
+        
 
         //arrays of stats, quirks, pitches
 

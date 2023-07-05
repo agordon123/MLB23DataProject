@@ -34,4 +34,7 @@ Route::middleware(['auth:sanctum'])->group(
         Route::resource('users', UserController::class);
     }
 );
+Route::get('/',);
+Route::get('/players', [PlayerController::class, 'index']);
+Route::get('/players/{player}', [PlayerController::class, 'show']);
 

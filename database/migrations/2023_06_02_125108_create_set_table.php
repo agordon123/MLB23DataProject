@@ -12,11 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('set', function (Blueprint $table) {
+        Schema::create('sets', function (Blueprint $table) {
             $table->id();
-            $table->integer('set_id');
             $table->string('name');
-            $table->foreignIdFor(Item::class,'item_id');
             $table->timestamps();
         });
     }

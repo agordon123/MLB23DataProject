@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->integer('series_id');
             $table->string('name');
-            $table->foreignIdFor(Item::class,'item_id');
             $table->timestamps();
         });
     }

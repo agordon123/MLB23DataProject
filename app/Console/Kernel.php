@@ -2,23 +2,11 @@
 
 namespace App\Console;
 
-use App\Console\Commands\AddNewPlayers;
-use App\Console\Commands\AddStats;
-use App\Console\Commands\ParseItems;
-use App\Console\Commands\AddTeamToItem;
-use App\Console\Commands\ParsePitchers;
-use App\Console\Commands\DeleteJsonFiles;
-use App\Console\Commands\ParseHittingStats;
-use Illuminate\Console\Scheduling\Schedule;
-use App\Console\Commands\ParseFieldingStats;
-use App\Console\Commands\AttachQuirksToPlayers;
-use App\Console\Commands\FetchMLBDataCommand;
+use App\Console\Commands\APICalls;
+use App\Console\Commands\FillDatabaseWithPlayers;
 use App\Console\Commands\GetItemsFromWeb;
-use App\Console\Commands\HTTPGet\GetDataFromMLB;
-use App\Console\Commands\IntakeDataCommand;
-use App\Console\Commands\ParseMetaData;
-use App\Console\Commands\ParseOneUpdate;
-use App\Console\Commands\ParseRosterUpdates;
+use App\Console\Commands\LoadTableData;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -31,9 +19,10 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
     }
     protected $commands = [
-
-
-
+        LoadTableData::class,
+        FillDatabaseWithPlayers::class,
+        APICalls::class,
+        GetItemsFromWeb::class,
     ];
     /**
      * Register the commands for the application.

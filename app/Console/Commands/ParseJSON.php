@@ -14,7 +14,7 @@ class ParseJSON extends Command
      *
      * @var string
      */
-    protected $signature = 'parse:update {--id=}';
+    protected $signature = 'parse:items';
 
     /**
      * The console command description.
@@ -28,11 +28,14 @@ class ParseJSON extends Command
      */
     public function handle()
     {
-        $id = $this->option('id');
-        $filePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'roster_updates' . DIRECTORY_SEPARATOR . "rooster_update{$id}.json");
+       
+        $filePath = storage_path('app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . "data_items_page1.json");
 
         $stream = fopen($filePath, 'r');
-
+        while(!feof($stream)){
+            dd($stream);
+        }
+    
         try {
             $listener = new JSONListener([]);
             $parser = new \JsonStreamingParser\Parser($stream, $listener);

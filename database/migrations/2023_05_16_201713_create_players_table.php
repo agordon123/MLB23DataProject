@@ -16,15 +16,21 @@ return new class extends Migration
     {
         Schema::create('players', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->references('id')->on('items');
-            $table->integer('ovr');
-            $table->integer('age');
-            $table->string("height");
-            $table->integer('weight');
-            $table->string('bat_hand');
-            $table->boolean('is_hitter');
-
-
+            $table->string('uuid')->unique('uuid_index');
+            $table->integer('ovr')->nullable();
+            $table->integer('age')->nullable();
+            $table->string("height")->nullable();
+            $table->integer('weight')->nullable();
+            $table->string('bat_hand')->nullable();
+            $table->string('throw_hand')->nullable();
+            $table->boolean('is_hitter')->nullable();
+            $table->string('team')->nullable();
+            $table->string('rarity')->nullable();
+            $table->string('img')->nullable();
+            $table->string('baked_img')->nullable();
+            $table->string('name')->nullable();
+            $table->string('position')->nullable();
+            $table->string('secondary_positions')->nullable();
             $table->timestamps();
         });
         Schema::create('pitcher_stats',function (Blueprint $table){
