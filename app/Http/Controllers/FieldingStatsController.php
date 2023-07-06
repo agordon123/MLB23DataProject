@@ -24,9 +24,9 @@ class FieldingStatsController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+
         $validated = Validator::make($request->all(), [
-            'uuid' => 'required',
+            'player_id' => 'required',
             'baserunning_ability' => 'required',
             'baserunning_aggression' => 'required',
             'fielding_ability' => 'required',

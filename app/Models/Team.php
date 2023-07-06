@@ -12,13 +12,12 @@ class Team extends Model
     protected $table = 'teams';
     protected $fillable = ['name', 'abbreviation'];
 
-    public function items()
+    public function player()
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Player::class);
     }
     public function scopeSearchByName($query, $name)
     {
         return $query->where('name', 'LIKE', "%{$name}%");
     }
-
 }

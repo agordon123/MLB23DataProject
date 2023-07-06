@@ -12,7 +12,7 @@ class Player extends Model
 
     protected $table = 'players';
     protected $fillable = [
-        'ovr', 'age', 'height', 'weight', 'bat_hand', 'throw_hand', 'is_hitter', 'position', 'secondary_positions', 'uuid',  'team', 'name',
+        'ovr', 'age', 'height', 'weight', 'bat_hand', 'throw_hand', 'is_hitter', 'position', 'secondary_positions', 'uuid',  'team', 'name', 'series_year'
     ];
     protected $hidden = ['img', 'baked_img', 'rarity'];
 
