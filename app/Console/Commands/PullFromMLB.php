@@ -13,7 +13,7 @@ class PullFromMLB extends Command
      *
      * @var string
      */
-    protected $signature = 'roster:update {--update=}';
+    protected $signature = 'roster:update {update :  The update number}';
 
     /**
      * The console command description.
@@ -27,9 +27,7 @@ class PullFromMLB extends Command
      */
     public function handle()
     {
-        $update = $this->option('update');
-        $page = $this->option('page');
-        $items = $this->option('items');
+        $update = $this->argument('update');
         $response = Http::get("https://mlb23.theshow.com/apis/roster_update.json?id={$update}");
         $data = $response->json();
         $file = json_encode($data, JSON_PRETTY_PRINT);
